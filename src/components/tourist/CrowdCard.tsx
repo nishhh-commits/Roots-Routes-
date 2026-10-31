@@ -3,10 +3,23 @@ import { freshnessLabel, timeAgo } from '../../utils/freshness'
 
 const rank: Record<CrowdLevel, number> = { Low: 1, Moderate: 2, High: 3 }
 
-const levelStyle: Record<CrowdLevel, string> = {
-  Low: 'bg-leaf-100 text-leaf-700',
-  Moderate: 'bg-sand-200 text-ink-700',
-  High: 'bg-plum-100 text-plum-700',
+const meterColor: Record<CrowdLevel, string> = {
+  Low: 'bg-leaf-500',
+  Moderate: 'bg-sandstone-500',
+  High: 'bg-plum-600',
+}
+
+function Meter({ level }: { level: CrowdLevel }) {
+  return (
+    <div className="flex gap-1" aria-hidden="true">
+      {[1, 2, 3].map((segment) => (
+        <span
+          key={segment}
+          className={`h-2 w-8 rounded-full ${segment <= rank[level] ? meterColor[level] : 'bg-cream-100'}`}
+        />
+      ))}
+    </div>
+  )
 }
 
 type Props = {
@@ -26,7 +39,10 @@ export default function CrowdCard({ report, all }: Props) {
           <h3 className="text-xl font-semibold text-plum-900">{report.name}</h3>
           <p className="text-sm text-ink-500">{report.area}</p>
         </div>
-        <span className={`rounded px-3 py-1 text-sm font-medium ${levelStyle[report.level]}`}>{report.level} crowd</span>
+        <div className="flex flex-col items-end gap-2">
+          <Meter level={report.level} />
+          <p className="text-sm font-medium text-ink-900">{report.level} crowd</p>
+        </div>
       </div>
       <p className="mt-3 text-sm text-ink-700">
         {timeAgo(report.minutesAgo)} · {freshnessLabel(report.minutesAgo)} · {report.reports} reports · {report.confidence} confidence

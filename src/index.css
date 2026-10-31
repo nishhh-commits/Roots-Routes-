@@ -36,3 +36,17 @@
     font-family: var(--font-display);
   }
 }
+:focus-visible {
+  outline: 2px solid var(--color-plum-600);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

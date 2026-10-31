@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { Artisan } from '../../types/artisan'
+import Photo from '../shared/Photo'
+
 
 type Props = {
   artisan: Artisan | null
@@ -43,6 +45,14 @@ export default function ArtisanModal({ artisan, onClose }: Props) {
             aria-label={artisan.craft}
             className="w-full max-w-lg rounded-t-xl bg-cream-50 p-6 md:rounded-xl"
           >
+            <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-xl">
+              <Photo
+                src={`/images/artisans/${artisan.id}.jpg`}
+                alt={artisan.craft}
+                fallback="none"
+                className="h-40 w-full"
+              />
+            </div>
             <p className="text-xs uppercase tracking-wide text-sandstone-600">{artisan.category}</p>
             <h2 className="mt-1 text-2xl font-semibold text-plum-900">{artisan.craft}</h2>
             <p className="text-sm text-ink-500">{artisan.name} · {artisan.neighborhood}</p>
