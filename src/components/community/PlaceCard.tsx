@@ -1,7 +1,10 @@
-<<<<<<< HEAD
+feature/garima-heritage-kala
+=======
+ HEAD
 import type { CommunityPlace } from '../../types/community'
 =======
 feature/nisha-auth
+main
 import type { CommunityPlace } from '../../types/community'
 
 export default function PlaceCard({ place }: { place: CommunityPlace }) {
@@ -23,9 +26,11 @@ export default function PlaceCard({ place }: { place: CommunityPlace }) {
       </div>
     </article>
   )
+ feature/garima-heritage-kala
+=======
 =======
 import type { CommunityPlace } from "../../types/community";
->>>>>>> 680d42b07d850c05436567e9a266d62a38d2d3d2
+680d42b07d850c05436567e9a266d62a38d2d3d2
 
 interface PlaceCardProps {
   place: CommunityPlace
@@ -33,7 +38,7 @@ interface PlaceCardProps {
 
 export default function PlaceCard({ place }: PlaceCardProps) {
   return (
-<<<<<<< HEAD
+HEAD
     <article className="grid gap-4 border-t border-sand-300 py-6 md:grid-cols-[12rem_1fr]">
       {place.image ? (
         <img src={place.image} alt={place.name} className="h-32 w-full rounded-md object-cover md:w-48" />
@@ -80,5 +85,6 @@ export default function PlaceCard({ place }: PlaceCardProps) {
     </article>
   );
 main
->>>>>>> 680d42b07d850c05436567e9a266d62a38d2d3d2
+ 680d42b07d850c05436567e9a266d62a38d2d3d2
+ main
 }

@@ -1,3 +1,5 @@
+feature/garima-heritage-kala
+=======
  feature/gaurav-hotel
 {/* HERO SECTION */}
 
@@ -491,6 +493,7 @@ export default function Landing() {
   return <PlaceholderPage title="Landing Page" owner="Nisha" />
 }
 
+main
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -708,7 +711,11 @@ export default function Landing() {
       </section>
     </div>
   )
+ feature/garima-heritage-kala
 }
+=======
+}
+ main
  main
  main
  main
