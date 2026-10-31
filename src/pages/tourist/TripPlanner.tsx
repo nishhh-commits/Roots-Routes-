@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import OptionChips from '../../components/shared/OptionChips'
+import Photo from '../../components/shared/Photo'
+
 import { destinations } from '../../data/destinations'
 import type { Interest } from '../../types/destination'
 
@@ -12,7 +14,7 @@ import {
 } from '../../services/itinerary'
 
 import { saveTrip } from '../../services/trips'
-import TripNarrative from '../../components/tourist/TripNarrative'
+
 import type {
   Budget,
   CrowdPreference,
@@ -99,6 +101,7 @@ export default function TripPlanner() {
         )
         .filter((day) => day.length > 0),
     )
+    setSavedSignature('')
   }
 
   function moveStop(
@@ -127,6 +130,8 @@ export default function TripPlanner() {
         return buildDay(prefs, list)
       }),
     )
+
+    setSavedSignature('')
   }
 
   function handleSave() {
@@ -381,6 +386,15 @@ export default function TripPlanner() {
                         key={stop.destination.id}
                         className="border-t border-sand-200 pt-5 first:border-0 first:pt-0"
                       >
+                        <div className="mb-3 overflow-hidden rounded-md">
+                          <Photo
+                            src={`/images/destinations/${stop.destination.id}.jpg`}
+                            alt={stop.destination.name}
+                            fallback="none"
+                            className="h-40 w-full transition duration-500 hover:scale-105"
+                          />
+                        </div>
+
                         <div className="flex flex-wrap items-start justify-between gap-4">
 
                           <div>
