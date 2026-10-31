@@ -16,6 +16,36 @@ const GreenStay = lazy(() => import('../pages/hotel/GreenStay'))
 
 export default function AppRoutes() {
   return (
+ feature/nisha-firestore
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/login" element={<Login />} />
+
+      <Route element={<MainLayout />}>
+        <Route element={<ProtectedRoute role="tourist" />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/trip-planner" element={<TripPlanner />} />
+          <Route path="/heritage-flow" element={<HeritageFlow />} />
+          <Route path="/kala-connect" element={<KalaConnect />} />
+          <Route path="/community" element={<CommunityDiscover />} />
+        </Route>
+
+        <Route element={<ProtectedRoute role="hotel" />}>
+          <Route path="/hotel" element={<HotelDashboard />} />
+          <Route
+            path="/hotel/greenstay"
+            element={
+              <GreenStay
+                title=""
+                unit=""
+                dataKey="water"
+                data={[]}
+                color=""
+              />
+            }
+          />
+    </Routes>
+
     <Suspense fallback={<p className="px-6 py-16 text-ink-500">Loading...</p>}>
       <Routes>
         <Route path="/" element={<Landing />} />
@@ -36,5 +66,6 @@ export default function AppRoutes() {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
+main
   )
 }

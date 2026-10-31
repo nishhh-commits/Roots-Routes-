@@ -12,7 +12,7 @@ export default function PlaceCard({ place }: PlaceCardProps) {
         <img
           src={place.image}
           alt={place.name}
-          className="h-40 w-full rounded-lg object-cover md:w-48"
+className="h-40 w-full rounded-lg object-cover md:w-48"
         />
       ) : (
         <div className="flex h-40 w-full items-center justify-center rounded-lg bg-cream-100 text-sm text-ink-500 md:w-48">
