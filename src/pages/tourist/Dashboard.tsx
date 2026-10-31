@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { destinations } from '../../data/destinations'
+import Photo from '../../components/shared/Photo'
 import { useAuth } from '../../services/auth'
 import { deleteTrip, loadTrips, type SavedTrip } from '../../services/trips'
 
@@ -33,7 +34,9 @@ export default function Dashboard() {
       <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">Tourist dashboard</p>
       <h1 className="mt-2 text-4xl font-semibold text-plum-900">Hello, {name}</h1>
       <p className="mt-3 text-ink-500">Where to next in Udaipur?</p>
-
+      <div className="mt-6 overflow-hidden rounded-md">
+        <Photo src="/images/landing/editorial-2.jpg" alt="Lake Pichola" fallback="none" className="h-44 w-full md:h-56" />
+      </div>
       <div className="mt-8 grid sm:grid-cols-2 sm:gap-x-10">
         {actions.map((action) => (
           <Link key={action.to} to={action.to} className="group border-t border-sand-300 py-5">
@@ -60,7 +63,7 @@ export default function Dashboard() {
                 <div>
                   <h3 className="text-lg font-semibold text-ink-900">{trip.name}</h3>
                   <p className="text-sm text-ink-500">
-                    Saved {trip.savedOn} · {names.length} stops · {trip.prefs.budget} · {trip.prefs.pace}
+                    Saved {trip.savedOn} · {names.length} stops · ₹{trip.prefs.budget} · {trip.prefs.pace}
                   </p>
                   <p className="mt-2 text-sm text-ink-700">{names.join(' → ')}</p>
                 </div>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import OptionChips from '../../components/shared/OptionChips'
+import OptionChips from '../shared/OptionChips'
 import { destinations } from '../../data/destinations'
 import type { Interest } from '../../types/destination'
 
@@ -9,10 +9,10 @@ import {
   buildDay,
   generateItinerary,
   summarize,
-} from '../../services/itinerary'
+} from '../../utils/itinerary'
 
 import { saveTrip } from '../../services/trips'
-import TripNarrative from '../../components/tourist/TripNarrative'
+import TripNarrative from './TripNarrative'
 import type {
   Budget,
   CrowdPreference,
@@ -20,7 +20,7 @@ import type {
   Pace,
   Preferences,
   Transport,
-} from '../../services/planner'
+} from '../../utils/planner'
 
 const interestOptions: Interest[] = [
   'Heritage',

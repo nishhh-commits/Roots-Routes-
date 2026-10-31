@@ -1,10 +1,11 @@
-type Props<T extends string> = {
+type Props<T extends string | number> = {
   options: T[]
   selected: T[]
   onToggle: (option: T) => void
+  format?: (option: T) => string
 }
 
-export default function OptionChips<T extends string>({ options, selected, onToggle }: Props<T>) {
+export default function OptionChips<T extends string | number>({ options, selected, onToggle, format }: Props<T>) {
   return (
     <div className="flex flex-wrap gap-2">
       {options.map((option) => (
@@ -18,7 +19,7 @@ export default function OptionChips<T extends string>({ options, selected, onTog
               : 'rounded-full border border-sand-300 px-4 py-1.5 text-sm text-ink-700 hover:bg-cream-100'
           }
         >
-          {option}
+          {format ? format(option) : option}
         </button>
       ))}
     </div>
