@@ -1,31 +1,20 @@
 import { useState, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-feature/nisha-firestore
-import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 
- main
 import heroImage from '../assets/udaipur-hero.jpg'
 import Photo from '../components/shared/Photo'
 import Footer from '../components/shared/Footer'
 import { useAuth } from '../services/auth'
 
+// Landing page content
 const problems = [
-feature/nisha-firestore
   'Trips are planned around a few famous landmarks, while lesser-known heritage stays unseen.',
   'Local artisans and traditional crafts are hard for visitors to find and book.',
   'Hotels lack a simple view of their water, energy, and waste use.',
-
-  'Visitors crowd the same few landmarks.',
-  'Local artisans and lesser-known places are hard to find.',
-  'Hotels lack a simple view of their resource use.',
- main
 ]
 
 const modules = [
-feature/nisha-firestore
   {
     name: 'AI Trip Planner',
     text: 'Itineraries built around your interests, budget, time, and pace.',
@@ -38,7 +27,7 @@ feature/nisha-firestore
   },
   {
     name: 'KalaConnect',
-    text: 'Meet local artisans and join craft workshops.',
+    text: 'Meet local artisans and discover traditional craft workshops.',
     to: '/kala-connect',
   },
   {
@@ -48,28 +37,16 @@ feature/nisha-firestore
   },
   {
     name: 'Community Discover',
-    text: 'Verified hidden places submitted by the community.',
+    text: 'Hidden places submitted by the community.',
     to: '/community',
   },
 ]
 
-// How it works
 const steps = [
   'Tell us what you enjoy.',
   'Get a personalised itinerary.',
   'Explore, meet artisans, and travel responsibly.',
 ]
-
-// Scroll reveal animation
-
-  { name: 'AI Trip Planner', text: 'Itineraries from your time, budget, interests and pace, with the reasons shown.' },
-  { name: 'HeritageFlow', text: 'Crowd levels (simulated in this prototype) that re-plan your route.' },
-  { name: 'KalaConnect', text: 'Local artisans, their stories and workshops.' },
-  { name: 'Community Discover', text: 'Hidden places submitted by locals and approved by moderators.' },
-  { name: 'GreenStay OS', text: 'Hotel usage turned into insights and suggested actions.' },
-]
-
-const steps = ['Tell us what you want', 'We build a route', 'You discover better']
 
 const travellerFlow = [
   'Your preferences',
@@ -80,11 +57,22 @@ const travellerFlow = [
   'Personalised itinerary',
 ]
 
-const hotelFlow = ['Hotel usage data', 'Metrics', 'Insights', 'Suggested actions']
+const hotelFlow = [
+  'Hotel usage data',
+  'Metrics',
+  'Insights',
+  'Suggested actions',
+]
 
-const roadmap = ['Udaipur (pilot)', 'Jaipur', 'Jodhpur', 'Rajasthan', 'India']
+const roadmap = [
+  'Udaipur (pilot)',
+  'Jaipur',
+  'Jodhpur',
+  'Rajasthan',
+  'India',
+]
 
- main
+// Scroll reveal animation
 function Reveal({ children }: { children: ReactNode }) {
   return (
     <motion.div
@@ -98,9 +86,52 @@ function Reveal({ children }: { children: ReactNode }) {
   )
 }
 
- feature/nisha-firestore
+// Flow diagram
+function Flow({ steps: items }: { steps: string[] }) {
+  return (
+    <ol className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
+      {items.map((item, index) => (
+        <li
+          key={item}
+          className="flex items-center gap-2 text-sm text-ink-900"
+        >
+          <span className="rounded border border-sand-300 bg-cream-50 px-3 py-1.5">
+            {item}
+          </span>
+
+          {index < items.length - 1 && (
+            <span
+              className="hidden text-sandstone-500 md:inline"
+              aria-hidden="true"
+            >
+              →
+            </span>
+          )}
+        </li>
+      ))}
+    </ol>
+  )
+}
+
 // Main Landing Page
 export default function Landing() {
+  const { login } = useAuth()
+  const navigate = useNavigate()
+  const [starting, setStarting] = useState(false)
+
+  async function startDemo() {
+    setStarting(true)
+
+    try {
+      await login('tourist@demo.com', 'demo123', 'tourist')
+      navigate('/trip-planner')
+    } catch {
+      navigate('/login')
+    } finally {
+      setStarting(false)
+    }
+  }
+
   return (
     <div>
       {/* HERO SECTION */}
@@ -114,58 +145,15 @@ export default function Landing() {
         <div className="absolute inset-0 bg-ink-900/55" />
 
         <div className="relative flex items-center justify-between px-6 py-5 md:px-12">
-          <span className="font-display text-xl font-semibold">Roots & Routes</span>
+          <span className="font-display text-xl font-semibold">
+            Roots & Routes
+          </span>
 
           <Link to="/login" className="text-sm hover:underline">
             Log in
           </Link>
         </div>
 
-
-function Flow({ steps: items }: { steps: string[] }) {
-  return (
-    <ol className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
-      {items.map((item, index) => (
-        <li key={item} className="flex items-center gap-2 text-sm text-ink-900">
-          <span className="rounded border border-sand-300 bg-cream-50 px-3 py-1.5">{item}</span>
-          {index < items.length - 1 && (
-            <span className="hidden text-sandstone-500 md:inline" aria-hidden="true">
-              →
-            </span>
-          )}
-        </li>
-      ))}
-    </ol>
-  )
-}
-
-export default function Landing() {
-  const { login } = useAuth()
-  const navigate = useNavigate()
-  const [starting, setStarting] = useState(false)
-
-  async function startDemo() {
-    setStarting(true)
-    try {
-      await login('tourist@demo.com', 'demo123', 'tourist')
-      navigate('/trip-planner')
-    } catch {
-      navigate('/login')
-    } finally {
-      setStarting(false)
-    }
-  }
-
-  return (
-    <div>
-      <section className="relative flex min-h-[88vh] flex-col text-cream-50">
-        <img src={heroImage} alt="Udaipur city and lake" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-ink-900/55" />
-        <div className="relative flex items-center justify-between px-6 py-5 md:px-12">
-          <span className="font-display text-xl font-semibold">Roots & Routes</span>
-          <Link to="/login" className="text-sm hover:underline">Log in</Link>
-        </div>
- main
         <div className="relative flex flex-1 items-end px-6 pb-16 md:px-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -173,32 +161,14 @@ export default function Landing() {
             transition={{ duration: 0.8, ease: 'easeOut' }}
             className="max-w-2xl"
           >
- feature/nisha-firestore
-            <p className="text-sm uppercase tracking-wide text-sand-300">Udaipur, Rajasthan</p>
+            <p className="text-sm uppercase tracking-wide text-sand-300">
+              Udaipur pilot prototype
+            </p>
 
             <h1 className="mt-3 text-5xl font-semibold leading-tight md:text-6xl">
               Discover Hidden Gems. Connect with Culture. Travel with Purpose.
             </h1>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                to="/trip-planner"
-                className="rounded-md bg-cream-50 px-5 py-3 text-sm font-medium text-plum-900 transition hover:bg-sand-200"
-              >
-                Plan my trip
-              </Link>
-
-              <Link
-                to="/kala-connect"
-                className="rounded-md border border-cream-50/70 px-5 py-3 text-sm font-medium transition hover:bg-cream-50/10"
-              >
-                Meet the artisans
-              </Link>
-
-            <p className="text-sm uppercase tracking-wide text-sand-300">Udaipur pilot prototype</p>
-            <h1 className="mt-3 text-5xl font-semibold leading-tight md:text-6xl">
-              Discover Hidden Gems. Connect with Culture. Travel with Purpose.
-            </h1>
             <div className="mt-8 flex flex-wrap gap-3">
               <button
                 onClick={startDemo}
@@ -207,35 +177,43 @@ export default function Landing() {
               >
                 {starting ? 'Starting...' : 'Try the demo'}
               </button>
-              <a href="#how" className="rounded-md border border-cream-50/70 px-5 py-3 text-sm font-medium transition hover:bg-cream-50/10">
+
+              <a
+                href="#how"
+                className="rounded-md border border-cream-50/70 px-5 py-3 text-sm font-medium transition hover:bg-cream-50/10"
+              >
                 See how it works
               </a>
- main
             </div>
           </motion.div>
         </div>
       </section>
 
-feature/nisha-firestore
       {/* PROBLEM SECTION */}
-
       <section className="mx-auto max-w-5xl px-6 py-20">
         <Reveal>
-          <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">The problem</p>
+          <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">
+            The problem
+          </p>
+
           <h2 className="mt-2 max-w-3xl text-3xl font-semibold text-plum-900 md:text-4xl">
-            Tourism concentrates visitors in a few places, while lesser-known places, artisans and sustainable options stay hard to discover.
+            Tourism concentrates visitors in a few places, while lesser-known
+            places, artisans and sustainable options stay hard to discover.
           </h2>
         </Reveal>
+
         <div className="mt-10 grid gap-8 md:grid-cols-3">
           {problems.map((problem) => (
             <Reveal key={problem}>
-              <p className="border-t border-sand-300 pt-4 text-ink-700">{problem}</p>
+              <p className="border-t border-sand-300 pt-4 text-ink-700">
+                {problem}
+              </p>
             </Reveal>
           ))}
         </div>
       </section>
 
- main
+      {/* SOLUTION SECTION */}
       <section className="mx-auto max-w-6xl px-6 pb-20">
         <Reveal>
           <div className="grid gap-4 md:grid-cols-12">
@@ -246,6 +224,7 @@ feature/nisha-firestore
                 className="h-72 w-full transition duration-700 hover:scale-105 md:h-[26rem]"
               />
             </div>
+
             <div className="flex flex-col justify-between gap-4 md:col-span-5">
               <div className="overflow-hidden rounded-md">
                 <Photo
@@ -254,10 +233,15 @@ feature/nisha-firestore
                   className="h-48 w-full transition duration-700 hover:scale-105 md:h-56"
                 />
               </div>
+
               <div>
-                <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">The solution</p>
+                <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">
+                  The solution
+                </p>
+
                 <p className="mt-2 font-display text-2xl leading-snug text-plum-900">
-                  Roots & Routes connects personalised planning with local culture, crowd awareness and sustainable choices.
+                  Roots & Routes connects personalised planning with local
+                  culture, crowd awareness and sustainable choices.
                 </p>
               </div>
             </div>
@@ -265,68 +249,13 @@ feature/nisha-firestore
         </Reveal>
       </section>
 
-      <section className="bg-cream-100 px-6 py-20">
- feature/nisha-firestore
-        <Reveal>
-          <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">The problem</p>
-
-          <h2 className="mt-2 max-w-2xl text-3xl font-semibold text-plum-900 md:text-4xl">
-            Tourism in Udaipur is concentrated, and the people behind it are hard to find.
-          </h2>
-
-          
-        <div className="mx-auto max-w-5xl">
-          <Reveal>
-            <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">One platform</p>
-            <h2 className="mt-2 text-3xl font-semibold text-plum-900 md:text-4xl">Five modules, one journey</h2>
-          </Reveal>
-          <div className="mt-10">
-            {modules.map((module, index) => (
-              <Reveal key={module.name}>
-                <div className="grid grid-cols-[3rem_1fr] items-baseline gap-4 border-t border-sand-300 py-6 md:grid-cols-[4rem_1fr_2fr]">
-                  <span className="font-display text-2xl text-sandstone-500">{String(index + 1).padStart(2, '0')}</span>
-                  <h3 className="text-xl font-semibold text-plum-900">{module.name}</h3>
-                  <p className="col-span-2 text-ink-700 md:col-span-1">{module.text}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="how" className="mx-auto max-w-5xl px-6 py-20">
-        <Reveal>
-          <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">How it works</p>
-          <h2 className="mt-2 text-3xl font-semibold text-plum-900 md:text-4xl">Three simple steps</h2>
-
-          main
-        </Reveal>
-        <div className="mt-10 grid gap-8 md:grid-cols-3">
-          {steps.map((step, index) => (
-            <Reveal key={step}>
-              <p className="font-display text-4xl text-leaf-500">{index + 1}</p>
-              <p className="mt-2 text-lg text-ink-900">{step}</p>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-
-        feature/nisha-firestore
-        <div className="mt-10 grid gap-8 md:grid-cols-3">
-          {problems.map((problem) => (
-            <Reveal key={problem}>
-              <p className="border-t border-sand-300 pt-4 text-ink-700">{problem}</p>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
       {/* FIVE MODULES SECTION */}
       <section className="bg-cream-100 px-6 py-20">
         <div className="mx-auto max-w-5xl">
           <Reveal>
-            <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">One platform</p>
+            <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">
+              One platform
+            </p>
 
             <h2 className="mt-2 text-3xl font-semibold text-plum-900 md:text-4xl">
               Five modules, one journey
@@ -338,7 +267,7 @@ feature/nisha-firestore
               <Reveal key={module.name}>
                 <Link
                   to={module.to}
-                  className="group grid grid-cols-[3rem_1fr] items-baseline gap-4 border-t border-sand-300 py-6 md:grid-cols-[4rem_1fr_2fr]"
+                  className="group grid grid-cols-[3rem_1fr] items-baseline gap-4 border-t border-sand-300 py-6 transition md:grid-cols-[4rem_1fr_2fr]"
                 >
                   <span className="font-display text-2xl text-sandstone-500">
                     {String(index + 1).padStart(2, '0')}
@@ -348,52 +277,37 @@ feature/nisha-firestore
                     {module.name}
                   </h3>
 
-                  <p className="col-span-2 text-ink-700 md:col-span-1">{module.text}</p>
+                  <p className="col-span-2 text-ink-700 md:col-span-1">
+                    {module.text}
+                  </p>
                 </Link>
               </Reveal>
             ))}
-
-      <section className="bg-cream-100 px-6 py-20">
-        <div className="mx-auto max-w-5xl">
-          <Reveal>
-            <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">Under the hood</p>
-            <h2 className="mt-2 text-3xl font-semibold text-plum-900 md:text-4xl">What is actually running</h2>
-          </Reveal>
-          <div className="mt-8 space-y-8">
-            <Reveal>
-              <p className="mb-3 text-sm font-medium text-plum-900">For travellers</p>
-              <Flow steps={travellerFlow} />
-            </Reveal>
-            <Reveal>
-              <p className="mb-3 text-sm font-medium text-plum-900">For hotels</p>
-              <Flow steps={hotelFlow} />
-            </Reveal>
-          </div>
-          <p className="mt-8 max-w-3xl text-sm text-ink-500">
-            The planner scores places with local logic, so it works without any AI service. Gemini is an optional extra for written summaries. Crowd levels and hotel figures in this prototype are simulated demo data.
-          </p>
-          <div className="mt-10">
-            <p className="mb-3 text-sm font-medium text-plum-900">Roadmap (not built yet)</p>
-            <Flow steps={roadmap} />
-            <p className="mt-3 text-sm text-ink-500">Place data is organised by city, so new cities can be added without rebuilding the app.</p>
- main
           </div>
         </div>
       </section>
 
- feature/nisha-firestore
       {/* HOW IT WORKS SECTION */}
-      <section className="mx-auto max-w-5xl px-6 py-20">
+      <section
+        id="how"
+        className="mx-auto max-w-5xl px-6 py-20"
+      >
         <Reveal>
-          <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">How it works</p>
+          <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">
+            How it works
+          </p>
 
-          <h2 className="mt-2 text-3xl font-semibold text-plum-900 md:text-4xl">Three simple steps</h2>
+          <h2 className="mt-2 text-3xl font-semibold text-plum-900 md:text-4xl">
+            Three simple steps
+          </h2>
         </Reveal>
 
         <div className="mt-10 grid gap-8 md:grid-cols-3">
           {steps.map((step, index) => (
             <Reveal key={step}>
-              <p className="font-display text-4xl text-leaf-500">{index + 1}</p>
+              <p className="font-display text-4xl text-leaf-500">
+                {index + 1}
+              </p>
 
               <p className="mt-2 text-lg text-ink-900">{step}</p>
             </Reveal>
@@ -401,32 +315,67 @@ feature/nisha-firestore
         </div>
       </section>
 
+      {/* UNDER THE HOOD SECTION */}
+      <section className="bg-cream-100 px-6 py-20">
+        <div className="mx-auto max-w-5xl">
+          <Reveal>
+            <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">
+              Under the hood
+            </p>
+
+            <h2 className="mt-2 text-3xl font-semibold text-plum-900 md:text-4xl">
+              What is actually running
+            </h2>
+          </Reveal>
+
+          <div className="mt-8 space-y-8">
+            <Reveal>
+              <p className="mb-3 text-sm font-medium text-plum-900">
+                For travellers
+              </p>
+
+              <Flow steps={travellerFlow} />
+            </Reveal>
+
+            <Reveal>
+              <p className="mb-3 text-sm font-medium text-plum-900">
+                For hotels
+              </p>
+
+              <Flow steps={hotelFlow} />
+            </Reveal>
+          </div>
+
+          <p className="mt-8 max-w-3xl text-sm text-ink-500">
+            The planner scores places with local logic, so it works without
+            any AI service. Gemini is an optional extra for written summaries.
+            Crowd levels and hotel figures in this prototype are simulated
+            demo data.
+          </p>
+
+          <div className="mt-10">
+            <p className="mb-3 text-sm font-medium text-plum-900">
+              Roadmap (not built yet)
+            </p>
+
+            <Flow steps={roadmap} />
+
+            <p className="mt-3 text-sm text-ink-500">
+              Place data is organised by city, so new cities can be added
+              without rebuilding the app.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* FINAL CALL TO ACTION */}
       <section className="bg-plum-900 px-6 py-20 text-cream-50">
         <Reveal>
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-semibold md:text-4xl">Ready to see Udaipur differently?</h2>
+            <h2 className="text-3xl font-semibold md:text-4xl">
+              See it plan a trip in under a minute
+            </h2>
 
-            <Link
-              to="/login"
-              className="mt-8 inline-block rounded-md bg-cream-50 px-6 py-3 text-sm font-medium text-plum-900 transition hover:bg-sand-200"
-            >
-              Get started
-            </Link>
-          </div>
-        </Reveal>
-      </section>
-
-      <Footer />
-    </div>
-  )
-}
-
-
-      <section className="bg-plum-900 px-6 py-20 text-cream-50">
-        <Reveal>
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-semibold md:text-4xl">See it plan a trip in under a minute</h2>
             <button
               onClick={startDemo}
               disabled={starting}
@@ -437,8 +386,8 @@ feature/nisha-firestore
           </div>
         </Reveal>
       </section>
+
       <Footer />
     </div>
   )
- main
 }
