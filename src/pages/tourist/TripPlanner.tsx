@@ -11,10 +11,8 @@ import {
   summarize,
 } from '../../services/itinerary'
 
-import {
-  saveTrip,
-} from '../../services/trips'
-
+import { saveTrip } from '../../services/trips'
+import TripNarrative from '../../components/tourist/TripNarrative'
 import type {
   Budget,
   CrowdPreference,
