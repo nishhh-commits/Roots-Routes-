@@ -1,6 +1,11 @@
 import type { Artisan } from '../../types/artisan'
 
-export default function ArtisanCard({ artisan }: { artisan: Artisan }) {
+type Props = {
+  artisan: Artisan
+  onOpen: (artisan: Artisan) => void
+}
+
+export default function ArtisanCard({ artisan, onOpen }: Props) {
   return (
     <article className="grid gap-2 border-t border-sand-300 py-6 md:grid-cols-[1fr_2fr_auto] md:gap-8">
       <div>
@@ -11,9 +16,11 @@ export default function ArtisanCard({ artisan }: { artisan: Artisan }) {
       <p className="text-ink-700">{artisan.story}</p>
       <div className="text-sm text-ink-700 md:text-right">
         <p>₹{artisan.workshopPrice} · {artisan.workshopDuration}</p>
-        <p className="text-ink-500">{artisan.contact}</p>
+        <button onClick={() => onOpen(artisan)} className="mt-1 text-plum-700 underline">
+          View profile
+        </button>
         {artisan.isDemo && (
-          <span className="mt-2 inline-block rounded bg-sand-200 px-2 py-0.5 text-xs text-ink-700">Demo data</span>
+          <span className="mt-2 block w-fit rounded bg-sand-200 px-2 py-0.5 text-xs text-ink-700 md:ml-auto">Demo data</span>
         )}
       </div>
     </article>

@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { crowdReports } from '../../data/heritage'
 import CrowdCard from '../../components/tourist/CrowdCard'
+import HeritageMap from '../../components/tourist/HeritageMap'
 
 const filters = ['All', 'Low', 'Moderate', 'High']
+const views = ['List', 'Map']
 
 export default function HeritageFlow() {
   const [active, setActive] = useState('All')
+  const [view, setView] = useState('List')
   const visible = active === 'All' ? crowdReports : crowdReports.filter((report) => report.level === active)
 
   return (
@@ -15,24 +18,41 @@ export default function HeritageFlow() {
       <p className="mt-3 max-w-2xl text-ink-500">
         Prototype data: these crowd reports are samples to show how the feature works. They are not live crowd detection.
       </p>
-      <div className="mt-8 flex flex-wrap gap-2">
-        {filters.map((filter) => (
-          <button
-            key={filter}
-            onClick={() => setActive(filter)}
-            className={
-              active === filter
-                ? 'rounded-full bg-plum-700 px-4 py-1.5 text-sm text-cream-50'
-                : 'rounded-full border border-sand-300 px-4 py-1.5 text-sm text-ink-700 hover:bg-cream-100'
-            }
-          >
-            {filter === 'All' ? 'All places' : `${filter} crowd`}
-          </button>
-        ))}
+
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap gap-2">
+          {filters.map((filter) => (
+            <button
+              key={filter}
+              onClick={() => setActive(filter)}
+              className={
+                active === filter
+                  ? 'rounded-full bg-plum-700 px-4 py-1.5 text-sm text-cream-50'
+                  : 'rounded-full border border-sand-300 px-4 py-1.5 text-sm text-ink-700 hover:bg-cream-100'
+              }
+            >
+              {filter === 'All' ? 'All places' : `${filter} crowd`}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-4 text-sm">
+          {views.map((item) => (
+            <button
+              key={item}
+              onClick={() => setView(item)}
+              className={view === item ? 'font-medium text-plum-700 underline' : 'text-ink-500 hover:text-ink-900'}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
       </div>
+
       <div className="mt-8">
         {visible.length === 0 ? (
           <p className="border-t border-sand-300 py-6 text-ink-500">No places match this filter.</p>
+        ) : view === 'Map' ? (
+          <HeritageMap reports={visible} />
         ) : (
           visible.map((report) => <CrowdCard key={report.destinationId} report={report} all={crowdReports} />)
         )}
