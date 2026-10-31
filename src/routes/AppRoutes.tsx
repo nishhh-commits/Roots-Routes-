@@ -45,10 +45,6 @@ export default function AppRoutes() {
               />
             }
           />
-        </Route>
-      </Route>
-
-      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }
