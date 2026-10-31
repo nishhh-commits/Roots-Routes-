@@ -32,7 +32,7 @@ export default function AppRoutes() {
 
         <Route element={<ProtectedRoute role="hotel" />}>
           <Route path="/hotel" element={<HotelDashboard />} />
-          <Route path="/hotel/greenstay" element={<GreenStay />} />
+          <Route path="/hotel/greenstay" element={<GreenStay title={''} unit={''} dataKey={'water'} data={[]} color={''} />}/>
         </Route>
       </Route>
     </Routes>
