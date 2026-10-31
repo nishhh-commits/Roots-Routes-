@@ -1,42 +1,42 @@
-export const experiences = [
-  {
-    id: 'exp-1',
-    kind: 'Heritage',
-    title: 'Explore the Royal City Palace',
-    description:
-      'Discover the royal history, architecture and cultural heritage of Udaipur.',
-    duration: '2-3 hours',
-    price: 500,
-    isDemo: true,
-  },
-  {
-    id: 'exp-2',
-    kind: 'Culture',
-    title: 'Traditional Rajasthani Folk Dance',
-    description:
-      'Experience traditional Rajasthani music and folk dance performances.',
-    duration: '1-2 hours',
-    price: 300,
-    isDemo: true,
-  },
-  {
-    id: 'exp-3',
-    kind: 'Art',
-    title: 'Miniature Painting Workshop',
-    description:
-      'Learn traditional miniature painting techniques from local artists.',
-    duration: '2 hours',
-    price: 700,
-    isDemo: true,
-  },
-  {
-    id: 'exp-4',
-    kind: 'Adventure',
-    title: 'Lake Pichola Boat Experience',
-    description:
-      'Enjoy scenic views of Udaipur through a memorable boat ride.',
-    duration: '1 hour',
-    price: 400,
-    isDemo: true,
-  },
-]
+import { experiences } from '../../data/experience'
+
+export default function ExperienceList() {
+  return (
+    <div className="space-y-4">
+      {experiences.map((item) => (
+        <article
+          key={item.id}
+          className="grid gap-4 border-t border-sand-300 py-5 md:grid-cols-[1fr_auto]"
+        >
+          <div>
+            <p className="text-xs uppercase tracking-wide text-leaf-700">
+              {item.kind}
+            </p>
+
+            <h3 className="mt-1 text-xl font-semibold text-plum-900">
+              {item.title}
+            </h3>
+
+            <p className="mt-2 text-sm text-ink-700">
+              {item.description}
+            </p>
+          </div>
+
+          <div className="text-sm text-ink-700 md:text-right">
+            <p>{item.duration}</p>
+
+            <p className="mt-2 font-semibold text-plum-900">
+              ₹{item.price} per person
+            </p>
+
+            {item.isDemo && (
+              <span className="mt-2 inline-block rounded bg-sand-200 px-2 py-1 text-xs">
+                Demo experience
+              </span>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  )
+}
