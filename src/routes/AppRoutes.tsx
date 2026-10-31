@@ -14,17 +14,15 @@ import CommunityDiscover from '../pages/tourist/CommunityDiscover'
 
 import HotelDashboard from '../pages/hotel/HotelDashboard'
 import GreenStay from '../pages/hotel/GreenStay'
+import NotFound from '../pages/NotFound'
 
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* Public Pages */}
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
 
-      {/* Protected Application Pages */}
       <Route element={<MainLayout />}>
-        {/* Tourist Routes */}
         <Route element={<ProtectedRoute role="tourist" />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/trip-planner" element={<TripPlanner />} />
@@ -33,15 +31,24 @@ export default function AppRoutes() {
           <Route path="/community" element={<CommunityDiscover />} />
         </Route>
 
-        {/* Hotel Routes */}
         <Route element={<ProtectedRoute role="hotel" />}>
           <Route path="/hotel" element={<HotelDashboard />} />
-          <Route path="/hotel/greenstay" element={<GreenStay title={''} unit={''} dataKey={'water'} data={[]} color={''} />} />
+          <Route
+            path="/hotel/greenstay"
+            element={
+              <GreenStay
+                title=""
+                unit=""
+                dataKey="water"
+                data={[]}
+                color=""
+              />
+            }
+          />
         </Route>
       </Route>
 
-      {/* Unknown Routes */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }
