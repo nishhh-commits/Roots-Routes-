@@ -10,4 +10,5 @@ export type CommunityPlace = {
   submittedOn: string
   status: PlaceStatus
   isDemo: boolean
+  image?: string
 }
