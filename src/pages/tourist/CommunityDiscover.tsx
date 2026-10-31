@@ -3,14 +3,14 @@ import { useEffect, useState } from 'react'
 import { communityPlaces } from '../../data/community'
 
 import type {
-CommunityPlace,
-PlaceStatus,
+  CommunityPlace,
+  PlaceStatus,
 } from '../../types/community'
 
 import PlaceCard from '../../components/community/PlaceCard'
 
 import SubmitPlaceForm, {
-type NewPlace,
+  type NewPlace,
 } from '../../components/community/SubmitPlaceForm'
 
 import ModerationList from '../../components/community/ModerationList'
@@ -19,235 +19,179 @@ const STORAGE_KEY = 'rr-community-places'
 
 type Tab = 'Explore' | 'Submit' | 'Moderate'
 
-// Load community places from localStorage
+// Load saved places
 function loadPlaces(): CommunityPlace[] {
-try {
-const raw = localStorage.getItem(STORAGE_KEY)
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
 
-return raw
-  ? (JSON.parse(raw) as CommunityPlace[])
-  : communityPlaces
+    return raw
+      ? (JSON.parse(raw) as CommunityPlace[])
+      : communityPlaces
 
-} catch (error) {
-console.error('Error loading community places:', error)
-return communityPlaces
-}
+  } catch {
+    return communityPlaces
+  }
 }
 
 // Main Community Discover Component
 export default function CommunityDiscover() {
 
-const [places, setPlaces] = useState<CommunityPlace[]>(loadPlaces)
+  const [places, setPlaces] = useState<CommunityPlace[]>(loadPlaces)
 
-const [tab, setTab] = useState<Tab>('Explore')
+  const [tab, setTab] = useState<Tab>('Explore')
 
-// Save places whenever the data changes
-useEffect(() => {
-try {
-localStorage.setItem(
-STORAGE_KEY,
-JSON.stringify(places)
-)
-} catch (error) {
-console.error('Error saving community places:', error)
-}
-}, [places])
+  // Save places to local storage
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(places)
+      )
+    } catch {
+      console.error('Unable to save community places')
+    }
+  }, [places])
 
-// Add a new community place
-function addPlace(input: NewPlace) {
+  // Add new place
+  function addPlace(input: NewPlace) {
 
-const place: CommunityPlace = {
-  ...input,
-  id: `c${Date.now()}`,
-  submittedBy: 'You',
-  submittedOn: new Date().toISOString().slice(0, 10),
-  status: 'pending',
-  isDemo: false,
-}
+    const place: CommunityPlace = {
+      ...input,
+      id: `c${Date.now()}`,
+      submittedBy: 'You',
+      submittedOn: new Date().toISOString().slice(0, 10),
+      status: 'pending',
+      isDemo: false,
+    }
 
-setPlaces((current) => [
-  place,
-  ...current,
-])
+    setPlaces((current) => [place, ...current])
 
-// Return to Explore is not automatic;
-// the user can visit the Moderate tab to review submissions.
+    setTab('Explore')
+  }
 
-}
+  // Approve or reject submitted places
+  function decide(id: string, status: PlaceStatus) {
 
-// Approve or reject a submitted place
-function decide(id: string, status: PlaceStatus) {
+    setPlaces((current) =>
+      current.map((place) =>
+        place.id === id
+          ? { ...place, status }
+          : place
+      )
+    )
+  }
 
-setPlaces((current) =>
-  current.map((place) =>
-    place.id === id
-      ? { ...place, status }
-      : place
+  // Filter approved places
+  const approved = places.filter(
+    (place) => place.status === 'approved'
   )
-)
 
-}
+  // Count pending submissions
+  const pendingCount = places.filter(
+    (place) => place.status === 'pending'
+  ).length
 
-// Filter approved places
-const approved = places.filter(
-(place) => place.status === 'approved'
-)
+  const tabs: Tab[] = [
+    'Explore',
+    'Submit',
+    'Moderate',
+  ]
 
-// Count pending submissions
-const pendingCount = places.filter(
-(place) => place.status === 'pending'
-).length
+  return (
+    <div className="mx-auto max-w-5xl px-6 py-12">
 
-const tabs: Tab[] = [
-'Explore',
-'Submit',
-'Moderate',
-]
+      {/* HEADER */}
 
-return (
+      <p className="text-sm font-medium uppercase tracking-wide text-leaf-700">
+        Community Discover
+      </p>
 
-<div className="mx-auto max-w-5xl px-6 py-12">
+      <h1 className="mt-2 text-4xl font-semibold text-plum-900">
+        Hidden places, verified by locals
+      </h1>
 
-  {/* PAGE HEADER */}
+      <p className="mt-3 max-w-2xl text-ink-500">
+        Only places approved by a moderator appear on Explore.
+        Starter entries are prototype data.
+      </p>
 
-  <p className="text-sm font-medium uppercase tracking-wide text-leaf-700">
-    Community Discover
-  </p>
+      {/* TABS */}
 
-  <h1 className="mt-2 text-4xl font-semibold text-plum-900">
-    Hidden places, verified by locals
-  </h1>
+      <div className="mt-8 flex flex-wrap gap-2">
 
-  <p className="mt-3 max-w-2xl text-ink-500">
-    Discover hidden destinations, share local experiences,
-    and help visitors explore the lesser-known beauty of Udaipur.
-    Only places approved by a moderator appear in Explore.
-  </p>
+        {tabs.map((item) => (
 
+          <button
+            key={item}
+            type="button"
+            onClick={() => setTab(item)}
+            className={
+              tab === item
+                ? 'rounded-full bg-plum-700 px-4 py-1.5 text-sm text-cream-50'
+                : 'rounded-full border border-sand-300 px-4 py-1.5 text-sm text-ink-700 hover:bg-cream-100'
+            }
+          >
+            {item === 'Moderate'
+              ? `Moderate (${pendingCount})`
+              : item}
+          </button>
 
-  {/* NAVIGATION TABS */}
+        ))}
 
-  <div className="mt-8 flex flex-wrap gap-2">
+      </div>
 
-    {tabs.map((item) => (
+      {/* TAB CONTENT */}
 
-      <button
-        key={item}
-        type="button"
-        onClick={() => setTab(item)}
-        className={
-          tab === item
-            ? 'rounded-full bg-plum-700 px-4 py-1.5 text-sm text-cream-50'
-            : 'rounded-full border border-sand-300 px-4 py-1.5 text-sm text-ink-700 hover:bg-cream-100'
-        }
-      >
+      <div className="mt-8">
 
-        {item === 'Moderate'
-          ? `Moderate (${pendingCount})`
-          : item}
+        {/* EXPLORE */}
 
-      </button>
+        {tab === 'Explore' && (
 
-    ))}
+          approved.length === 0 ? (
 
-  </div>
+            <p className="border-t border-sand-300 py-6 text-ink-500">
+              No approved places yet.
+            </p>
 
+          ) : (
 
-  {/* TAB CONTENT */}
-
-  <div className="mt-8">
-
-
-    {/* EXPLORE SECTION */}
-
-    {tab === 'Explore' && (
-
-      <div>
-
-        <h2 className="mb-5 text-2xl font-semibold text-plum-900">
-          Explore hidden places
-        </h2>
-
-        {approved.length === 0 ? (
-
-          <p className="border-t border-sand-300 py-6 text-ink-500">
-            No approved places yet.
-            Be the first to discover and submit a hidden gem!
-          </p>
-
-        ) : (
-
-          <div className="grid gap-6 md:grid-cols-2">
-
-            {approved.map((place) => (
+            approved.map((place) => (
 
               <PlaceCard
                 key={place.id}
                 place={place}
               />
 
-            ))}
+            ))
 
-          </div>
+          )
+
+        )}
+
+        {/* SUBMIT */}
+
+        {tab === 'Submit' && (
+
+          <SubmitPlaceForm
+            onSubmit={addPlace}
+          />
+
+        )}
+
+        {/* MODERATE */}
+
+        {tab === 'Moderate' && (
+
+          <ModerationList
+            places={places}
+            onDecide={decide}
+          />
 
         )}
 
       </div>
 
-    )}
-
-
-    {/* SUBMIT SECTION */}
-
-    {tab === 'Submit' && (
-
-      <div>
-
-        <h2 className="mb-5 text-2xl font-semibold text-plum-900">
-          Share a hidden place
-        </h2>
-
-        <p className="mb-6 text-ink-500">
-          Know a beautiful place in Udaipur that deserves
-          more attention? Share it with our community.
-        </p>
-
-        <SubmitPlaceForm
-          onSubmit={addPlace}
-        />
-
-      </div>
-
-    )}
-
-
-    {/* MODERATION SECTION */}
-
-    {tab === 'Moderate' && (
-
-      <div>
-
-        <h2 className="mb-5 text-2xl font-semibold text-plum-900">
-          Review community submissions
-        </h2>
-
-        <p className="mb-6 text-ink-500">
-          Review submitted places and approve or reject
-          them before they become visible to visitors.
-        </p>
-
-        <ModerationList
-          places={places}
-          onDecide={decide}
-        />
-
-      </div>
-
-    )}
-
-  </div>
-
-</div>
-
-)
+    </div>
+  )
 }

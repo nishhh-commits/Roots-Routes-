@@ -1,80 +1,47 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 
-// Layout
 import MainLayout from '../layouts/MainLayout'
+import ProtectedRoute from '../components/shared/ProtectedRoute'
 
-// Main Pages
 import Landing from '../pages/Landing'
 import Login from '../pages/auth/Login'
 
-// Tourist Pages
 import Dashboard from '../pages/tourist/Dashboard'
 import TripPlanner from '../pages/tourist/TripPlanner'
 import HeritageFlow from '../pages/tourist/HeritageFlow'
 import KalaConnect from '../pages/tourist/KalaConnect'
 import CommunityDiscover from '../pages/tourist/CommunityDiscover'
 
-// Hotel Pages
 import HotelDashboard from '../pages/hotel/HotelDashboard'
 import GreenStay from '../pages/hotel/GreenStay'
 
 export default function AppRoutes() {
   return (
     <Routes>
-
-      {/* Landing */}
+      {/* Public Pages */}
       <Route path="/" element={<Landing />} />
-
-      {/* Authentication */}
       <Route path="/login" element={<Login />} />
 
-      {/* Main Application */}
+      {/* Protected Application Pages */}
       <Route element={<MainLayout />}>
+        {/* Tourist Routes */}
+        <Route element={<ProtectedRoute role="tourist" />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/trip-planner" element={<TripPlanner />} />
+          <Route path="/heritage-flow" element={<HeritageFlow />} />
+          <Route path="/kala-connect" element={<KalaConnect />} />
+          <Route path="/community" element={<CommunityDiscover />} />
+        </Route>
 
-        {/* Tourist Dashboard */}
-        <Route
-          path="/dashboard"
-          element={<Dashboard />}
-        />
-
-        {/* Trip Planner */}
-        <Route
-          path="/trip-planner"
-          element={<TripPlanner />}
-        />
-
-        {/* Heritage Flow */}
-        <Route
-          path="/heritage-flow"
-          element={<HeritageFlow />}
-        />
-
-        {/* KalaConnect */}
-        <Route
-          path="/kala-connect"
-          element={<KalaConnect />}
-        />
-
-        {/* Community */}
-        <Route
-          path="/community"
-          element={<CommunityDiscover />}
-        />
-
-        {/* Hotel Dashboard */}
-        <Route
-          path="/hotel"
-          element={<HotelDashboard />}
-        />
-
-        {/* GreenStay */}
-        <Route
-          path="/hotel"
-          element={<GreenStay title={''} unit={''} dataKey={'water'} data={[]} color={''} />}
-        />
-
+        {/* Hotel Routes */}
+        <Route element={<ProtectedRoute role="hotel" />}>
+          <Route path="/hotel" element={<HotelDashboard />} />
+          <Route path="/hotel/greenstay" element={<GreenStay title={''} unit={''} dataKey={'water'} data={[]} color={''} />} />
+        </Route>
       </Route>
 
+      {/* Unknown Routes */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
