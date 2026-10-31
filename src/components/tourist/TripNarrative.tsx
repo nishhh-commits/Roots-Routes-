@@ -4,6 +4,12 @@ import { Link } from 'react-router-dom'
 import OptionChips from '../shared/OptionChips'
 import { destinations } from '../../data/destinations'
 import type { Interest } from '../../types/destination'
+import type {
+  CrowdPreference,
+  Pace,
+  Preferences,
+  Transport,
+} from '../../types/planner'
 
 import {
   buildDay,
@@ -12,15 +18,6 @@ import {
 } from '../../utils/itinerary'
 
 import { saveTrip } from '../../services/trips'
-import TripNarrative from './TripNarrative'
-import type {
-  Budget,
-  CrowdPreference,
-  Duration,
-  Pace,
-  Preferences,
-  Transport,
-} from '../../utils/planner'
 
 const interestOptions: Interest[] = [
   'Heritage',
@@ -32,14 +29,20 @@ const interestOptions: Interest[] = [
   'Relaxation',
 ]
 
+const cityDestinations = destinations.filter(
+  (destination) => destination.cityId === destinations[0].cityId,
+)
+
 const initialPreferences: Preferences = {
+  cityId: destinations[0].cityId,
+  startId: destinations[0].id,
+  days: 1,
+  hoursPerDay: 8,
+  budget: 3000,
   interests: ['Heritage', 'Culture'],
-  budget: 'Moderate',
   crowd: 'Balanced',
-  duration: '1 day',
   pace: 'Balanced',
   transport: 'Two-wheeler',
-  startId: destinations[0].id,
 }
 
 const selectClass =
@@ -99,6 +102,7 @@ export default function TripPlanner() {
         )
         .filter((day) => day.length > 0),
     )
+    setSavedSignature('')
   }
 
   function moveStop(
@@ -127,6 +131,8 @@ export default function TripPlanner() {
         return buildDay(prefs, list)
       }),
     )
+
+    setSavedSignature('')
   }
 
   function handleSave() {
@@ -134,7 +140,7 @@ export default function TripPlanner() {
 
     saveTrip({
       id: `t${Date.now()}`,
-      name: `${prefs.duration} in Udaipur`,
+      name: `${prefs.days} day${prefs.days > 1 ? 's' : ''} in Udaipur`,
       savedOn: new Date().toISOString().slice(0, 10),
       prefs,
       days: days.map((day) =>
@@ -145,12 +151,11 @@ export default function TripPlanner() {
     setSavedSignature(signature)
   }
 
-  const summary = summarize(days)
+  const summary = summarize(prefs, days)
 
   return (
     <main className="min-h-screen bg-cream-50 px-5 py-10 text-ink-800 md:px-10">
       <div className="mx-auto max-w-5xl">
-
         <Link
           to="/dashboard"
           className="text-sm text-plum-700 hover:underline"
@@ -175,7 +180,6 @@ export default function TripPlanner() {
         </div>
 
         <section className="mt-10 space-y-8 rounded-xl border border-sand-300 bg-white p-6 md:p-8">
-
           <div>
             <h2 className="text-xl font-semibold text-plum-900">
               01. What interests you?
@@ -193,24 +197,20 @@ export default function TripPlanner() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
-
             <label className="text-sm font-medium text-ink-700">
               Starting location
               <select
                 className={selectClass}
                 value={prefs.startId}
                 onChange={(event) =>
-                  setPrefs({
-                    ...prefs,
+                  setPrefs((current) => ({
+                    ...current,
                     startId: event.target.value,
-                  })
+                  }))
                 }
               >
-                {destinations.map((destination) => (
-                  <option
-                    key={destination.id}
-                    value={destination.id}
-                  >
+                {cityDestinations.map((destination) => (
+                  <option key={destination.id} value={destination.id}>
                     {destination.name}
                   </option>
                 ))}
@@ -221,36 +221,55 @@ export default function TripPlanner() {
               Duration
               <select
                 className={selectClass}
-                value={prefs.duration}
+                value={prefs.days}
                 onChange={(event) =>
-                  setPrefs({
-                    ...prefs,
-                    duration: event.target.value as Duration,
-                  })
+                  setPrefs((current) => ({
+                    ...current,
+                    days: Number(event.target.value),
+                  }))
                 }
               >
-                <option>Half day</option>
-                <option>1 day</option>
-                <option>2 days</option>
-                <option>3 days</option>
+                <option value={1}>1 day</option>
+                <option value={2}>2 days</option>
+                <option value={3}>3 days</option>
               </select>
             </label>
 
             <label className="text-sm font-medium text-ink-700">
-              Budget
+              Daily available time
+              <select
+                className={selectClass}
+                value={prefs.hoursPerDay}
+                onChange={(event) =>
+                  setPrefs((current) => ({
+                    ...current,
+                    hoursPerDay: Number(event.target.value),
+                  }))
+                }
+              >
+                <option value={4}>4 hours</option>
+                <option value={6}>6 hours</option>
+                <option value={8}>8 hours</option>
+                <option value={10}>10 hours</option>
+              </select>
+            </label>
+
+            <label className="text-sm font-medium text-ink-700">
+              Total budget
               <select
                 className={selectClass}
                 value={prefs.budget}
                 onChange={(event) =>
-                  setPrefs({
-                    ...prefs,
-                    budget: event.target.value as Budget,
-                  })
+                  setPrefs((current) => ({
+                    ...current,
+                    budget: Number(event.target.value),
+                  }))
                 }
               >
-                <option>Budget</option>
-                <option>Moderate</option>
-                <option>Premium</option>
+                <option value={1500}>₹1,500</option>
+                <option value={3000}>₹3,000</option>
+                <option value={5000}>₹5,000</option>
+                <option value={10000}>₹10,000</option>
               </select>
             </label>
 
@@ -260,10 +279,10 @@ export default function TripPlanner() {
                 className={selectClass}
                 value={prefs.pace}
                 onChange={(event) =>
-                  setPrefs({
-                    ...prefs,
+                  setPrefs((current) => ({
+                    ...current,
                     pace: event.target.value as Pace,
-                  })
+                  }))
                 }
               >
                 <option>Relaxed</option>
@@ -278,10 +297,10 @@ export default function TripPlanner() {
                 className={selectClass}
                 value={prefs.crowd}
                 onChange={(event) =>
-                  setPrefs({
-                    ...prefs,
+                  setPrefs((current) => ({
+                    ...current,
                     crowd: event.target.value as CrowdPreference,
-                  })
+                  }))
                 }
               >
                 <option>Avoid crowded</option>
@@ -296,10 +315,10 @@ export default function TripPlanner() {
                 className={selectClass}
                 value={prefs.transport}
                 onChange={(event) =>
-                  setPrefs({
-                    ...prefs,
+                  setPrefs((current) => ({
+                    ...current,
                     transport: event.target.value as Transport,
-                  })
+                  }))
                 }
               >
                 <option>Walking</option>
@@ -308,7 +327,6 @@ export default function TripPlanner() {
                 <option>Car</option>
               </select>
             </label>
-
           </div>
 
           <button
@@ -321,12 +339,10 @@ export default function TripPlanner() {
           {error && (
             <p className="text-sm text-red-700">{error}</p>
           )}
-
         </section>
 
         {days.length > 0 && (
           <section className="mt-12">
-
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-leaf-700">
                 Your personalised plan
@@ -382,7 +398,6 @@ export default function TripPlanner() {
                         className="border-t border-sand-200 pt-5 first:border-0 first:pt-0"
                       >
                         <div className="flex flex-wrap items-start justify-between gap-4">
-
                           <div>
                             <p className="text-xs font-medium uppercase tracking-wide text-leaf-700">
                               Stop {index + 1} · {stop.destination.area}
@@ -397,7 +412,7 @@ export default function TripPlanner() {
                             </p>
 
                             <p className="mt-2 text-xs text-ink-500">
-                              Visit: {stop.destination.visitMinutes} min
+                              Visit: {stop.visitMinutes} min
                               {' · '}
                               Travel: {stop.travelKm} km
                               {' · '}
@@ -443,7 +458,6 @@ export default function TripPlanner() {
                               Remove
                             </button>
                           </div>
-
                         </div>
                       </article>
                     ))}
@@ -477,10 +491,8 @@ export default function TripPlanner() {
                 Generate another itinerary
               </button>
             </div>
-
           </section>
         )}
-
       </div>
     </main>
   )
