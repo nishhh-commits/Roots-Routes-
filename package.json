@@ -1,5 +1,6 @@
 {
   "name": "roots-routes",
+ main
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -14,7 +15,11 @@
     "framer-motion": "^14.9.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
+ fix/dependencies
+    "react-is": "^19.3.1",
+
     "react-is": "^19.2.0",
+ main
     "react-router-dom": "^7.18.5",
     "recharts": "^3.10.1",
     "tailwindcss": "^4.3.3"
@@ -35,3 +40,4 @@
     "vite": "^8.3.5"
   }
 }
+

@@ -59,21 +59,18 @@ function Reveal({ children }: { children: ReactNode }) {
 export default function Landing() {
   return (
     <div>
-      {/* HERO SECTION */}
       <section className="relative flex min-h-[88vh] flex-col text-cream-50">
         <img
           src={heroImage}
           alt="Udaipur city and lake"
           className="absolute inset-0 h-full w-full object-cover"
         />
-
         <div className="absolute inset-0 bg-ink-900/55" />
 
         <div className="relative flex items-center justify-between px-6 py-5 md:px-12">
           <span className="font-display text-xl font-semibold">
             Roots & Routes
           </span>
-
           <Link to="/login" className="text-sm hover:underline">
             Log in
           </Link>
@@ -89,7 +86,6 @@ export default function Landing() {
             <p className="text-sm uppercase tracking-wide text-sand-300">
               Udaipur, Rajasthan
             </p>
-
             <h1 className="mt-3 text-5xl font-semibold leading-tight md:text-6xl">
               Discover Hidden Gems. Connect with Culture. Travel with Purpose.
             </h1>
@@ -101,7 +97,6 @@ export default function Landing() {
               >
                 Plan my trip
               </Link>
-
               <Link
                 to="/kala-connect"
                 className="rounded-md border border-cream-50/70 px-5 py-3 text-sm font-medium transition hover:bg-cream-50/10"
@@ -113,13 +108,11 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* PROBLEM SECTION */}
       <section className="mx-auto max-w-5xl px-6 py-20">
         <Reveal>
           <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">
             The problem
           </p>
-
           <h2 className="mt-2 max-w-2xl text-3xl font-semibold text-plum-900 md:text-4xl">
             Tourism in Udaipur is concentrated, and the people behind it are hard to find.
           </h2>
@@ -136,14 +129,12 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* FIVE MODULES SECTION */}
       <section className="bg-cream-100 px-6 py-20">
         <div className="mx-auto max-w-5xl">
           <Reveal>
             <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">
               One platform
             </p>
-
             <h2 className="mt-2 text-3xl font-semibold text-plum-900 md:text-4xl">
               Five modules, one journey
             </h2>
@@ -159,11 +150,9 @@ export default function Landing() {
                   <span className="font-display text-2xl text-sandstone-500">
                     {String(index + 1).padStart(2, '0')}
                   </span>
-
                   <h3 className="text-xl font-semibold text-plum-900 transition group-hover:text-plum-600">
                     {module.name}
                   </h3>
-
                   <p className="col-span-2 text-ink-700 md:col-span-1">
                     {module.text}
                   </p>
@@ -174,13 +163,11 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
       <section className="mx-auto max-w-5xl px-6 py-20">
         <Reveal>
           <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">
             How it works
           </p>
-
           <h2 className="mt-2 text-3xl font-semibold text-plum-900 md:text-4xl">
             Three simple steps
           </h2>
@@ -192,23 +179,18 @@ export default function Landing() {
               <p className="font-display text-4xl text-leaf-500">
                 {index + 1}
               </p>
-
-              <p className="mt-2 text-lg text-ink-900">
-                {step}
-              </p>
+              <p className="mt-2 text-lg text-ink-900">{step}</p>
             </Reveal>
           ))}
         </div>
       </section>
 
-      {/* FINAL CALL TO ACTION */}
       <section className="bg-plum-900 px-6 py-20 text-cream-50">
         <Reveal>
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-3xl font-semibold md:text-4xl">
               Ready to see Udaipur differently?
             </h2>
-
             <Link
               to="/login"
               className="mt-8 inline-block rounded-md bg-cream-50 px-6 py-3 text-sm font-medium text-plum-900 transition hover:bg-sand-200"

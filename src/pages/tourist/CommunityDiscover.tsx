@@ -43,7 +43,7 @@ export default function CommunityDiscover() {
     }
 
     setPlaces((current) => [place, ...current])
-    setTab('Explore')
+    setTab('Moderate')
   }
 
   function decide(id: string, status: PlaceStatus) {
