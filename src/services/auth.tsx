@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(readStoredUser)
 
   async function login(email: string, password: string, role: Role) {
-    await new Promise((resolve) => setTimeout(resolve, 700))
+    await new Promise((resolve) => setTimeout(resolve, 300))
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       throw new Error('Enter a valid email address.')
     }
