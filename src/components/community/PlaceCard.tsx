@@ -1,6 +1,10 @@
 import type { CommunityPlace } from '../../types/community'
 
-export default function PlaceCard({ place }: { place: CommunityPlace }) {
+interface PlaceCardProps {
+  place: CommunityPlace
+}
+
+export default function PlaceCard({ place }: PlaceCardProps) {
   return (
     <article className="grid gap-4 border-t border-sand-300 py-6 md:grid-cols-[12rem_1fr]">
       {place.image ? (
@@ -19,4 +23,5 @@ export default function PlaceCard({ place }: { place: CommunityPlace }) {
       </div>
     </article>
   )
+}
 }

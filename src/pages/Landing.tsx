@@ -13,22 +13,27 @@ const modules = [
   {
     name: 'AI Trip Planner',
     text: 'Itineraries built around your interests, budget, time, and pace.',
+    to: '/trip-planner',
   },
   {
     name: 'HeritageFlow',
     text: 'Crowd-aware visits with calmer alternatives nearby.',
+    to: '/heritage-flow',
   },
   {
     name: 'KalaConnect',
     text: 'Meet local artisans and join craft workshops.',
+    to: '/kala-connect',
   },
   {
     name: 'GreenStay OS',
     text: 'A sustainability dashboard for hospitality partners.',
+    to: '/hotel/greenstay',
   },
   {
     name: 'Community Discover',
     text: 'Verified hidden places submitted by the community.',
+    to: '/community',
   },
 ]
 
@@ -54,7 +59,6 @@ function Reveal({ children }: { children: ReactNode }) {
 export default function Landing() {
   return (
     <div>
-      {/* HERO SECTION */}
       <section className="relative flex min-h-[88vh] flex-col text-cream-50">
         <img
           src={heroImage}
@@ -73,7 +77,6 @@ export default function Landing() {
             Log in
           </Link>
         </div>
-
         <div className="relative flex flex-1 items-end px-6 pb-16 md:px-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -81,26 +84,14 @@ export default function Landing() {
             transition={{ duration: 0.8, ease: 'easeOut' }}
             className="max-w-2xl"
           >
-            <p className="text-sm uppercase tracking-wide text-sand-300">
-              Udaipur, Rajasthan
-            </p>
-
-            <h1 className="mt-3 text-5xl font-semibold leading-tight md:text-6xl">
-              Discover Hidden Gems. Connect with Culture. Travel with Purpose.
-            </h1>
-
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                to="/login"
-                className="rounded-md bg-cream-50 px-5 py-3 text-sm font-medium text-plum-900 transition hover:bg-sand-200"
-              >
+              <Link to="/trip-planner" className="rounded-md bg-cream-50 px-5 py-3 text-sm font-medium text-plum-900 transition hover:bg-sand-200">
                 Plan my trip
               </Link>
-
-              <Link
-                to="/login"
-                className="rounded-md border border-cream-50/70 px-5 py-3 text-sm font-medium transition hover:bg-cream-50/10"
-              >
+              <Link to="/kala-connect" className="rounded-md border border-cream-50/70 px-5 py-3 text-sm font-medium transition hover:bg-cream-50/10">
+                Meet the artisans
+              </Link>
+            </div>
                 Meet the artisans
               </Link>
             </div>
@@ -108,18 +99,15 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* PROBLEM SECTION */}
       <section className="mx-auto max-w-5xl px-6 py-20">
         <Reveal>
           <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">
             The problem
           </p>
-
           <h2 className="mt-2 max-w-2xl text-3xl font-semibold text-plum-900 md:text-4xl">
             Tourism in Udaipur is concentrated, and the people behind it are hard to find.
           </h2>
         </Reveal>
-
         <div className="mt-10 grid gap-8 md:grid-cols-3">
           {problems.map((problem) => (
             <Reveal key={problem}>
@@ -131,7 +119,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* MODULES SECTION */}
       <section className="bg-cream-100 px-6 py-20">
         <div className="mx-auto max-w-5xl">
           <Reveal>
@@ -143,12 +130,12 @@ export default function Landing() {
               Five modules, one journey
             </h2>
           </Reveal>
-
           <div className="mt-10">
             {modules.map((module, index) => (
               <Reveal key={module.name}>
                 <Link
-                  to="/login"
+                <Link
+                  to={module.to}
                   className="group grid grid-cols-[3rem_1fr] items-baseline gap-4 border-t border-sand-300 py-6 md:grid-cols-[4rem_1fr_2fr]"
                 >
                   <span className="font-display text-2xl text-sandstone-500">
@@ -163,13 +150,13 @@ export default function Landing() {
                     {module.text}
                   </p>
                 </Link>
+                </Link>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
       <section className="mx-auto max-w-5xl px-6 py-20">
         <Reveal>
           <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">
