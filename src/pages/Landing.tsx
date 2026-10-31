@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
 import heroImage from '../assets/udaipur-hero.jpg'
+import Photo from '../components/shared/Photo'
+import Footer from '../components/shared/Footer'
 
 // Problem statements
 const problems = [
@@ -135,9 +137,33 @@ return (
   </section>
 
   {/* PROBLEM SECTION */}
+      <section className="mx-auto max-w-6xl px-6 pb-20">
+        <Reveal>
+          <div className="grid gap-4 md:grid-cols-12">
+            <div className="overflow-hidden rounded-md md:col-span-7">
+              <Photo
+                src="/images/landing/editorial-1.jpg"
+                alt="A lane in Udaipur's old city"
+                className="h-72 w-full transition duration-700 hover:scale-105 md:h-[26rem]"
+              />
+            </div>
+            <div className="flex flex-col gap-4 md:col-span-5">
+              <div className="overflow-hidden rounded-md">
+                <Photo
+                  src="/images/landing/editorial-2.jpg"
+                  alt="Lake Pichola at dusk"
+                  className="h-48 w-full transition duration-700 hover:scale-105 md:h-56"
+                />
+              </div>
+              <p className="font-display text-2xl leading-snug text-plum-900">
+                The city is more than its famous palaces. Roots & Routes points you to the lanes, makers and lakeside corners in between.
+              </p>
+            </div>
+          </div>
+        </Reveal>
+      </section>
 
-  <section className="mx-auto max-w-5xl px-6 py-20">
-
+      <section className="bg-cream-100 px-6 py-20">
     <Reveal>
 
       <p className="text-sm font-medium uppercase tracking-wide text-sandstone-600">

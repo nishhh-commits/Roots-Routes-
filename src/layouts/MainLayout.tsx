@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import Footer from '../components/shared/Footer'
 import { useAuth } from '../services/auth'
 
 const touristLinks = [
@@ -73,7 +74,8 @@ export default function MainLayout() {
         >
           <Outlet />
         </motion.div>
-      </main>
+           </main>
+      <Footer />
     </div>
   )
 }
