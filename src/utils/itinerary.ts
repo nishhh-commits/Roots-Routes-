@@ -1,223 +1,255 @@
 import { destinations } from '../data/destinations'
 import type { Destination } from '../types/destination'
+import type { CrowdLevel } from '../types/crowd'
 import type {
-Budget,
-CrowdPreference,
-Duration,
-Pace,
-PlannedStop,
-Preferences,
-Transport,
-} from './planner'
-
-const dayCount: Record<Duration, number> = {
-'Half day': 1,
-'1 day': 1,
-'2 days': 2,
-'3 days': 3,
-}
+  CrowdPreference,
+  Pace,
+  PlannedStop,
+  Preferences,
+  Reason,
+  Transport,
+} from '../types/planner'
 
 const stopsPerDay: Record<Pace, number> = {
-Relaxed: 2,
-Balanced: 3,
-'Fast-paced': 4,
-}
-
-const costCap: Record<Budget, number> = {
-Budget: 300,
-Moderate: 700,
-Premium: Infinity,
+  Relaxed: 2,
+  Balanced: 3,
+  'Fast-paced': 4,
 }
 
 const speedKmh: Record<Transport, number> = {
-Walking: 4,
-'Public transport': 15,
-'Two-wheeler': 25,
-Car: 25,
+  Walking: 4,
+  'Public transport': 15,
+  'Two-wheeler': 25,
+  Car: 25,
 }
 
 const costPerKm: Record<Transport, number> = {
-Walking: 0,
-'Public transport': 8,
-'Two-wheeler': 5,
-Car: 15,
+  Walking: 0,
+  'Public transport': 8,
+  'Two-wheeler': 5,
+  Car: 15,
 }
 
 const crowdWeight: Record<CrowdPreference, number> = {
-'Avoid crowded': 2,
-Balanced: 0.5,
-'Crowds are okay': 0,
+  'Avoid crowded': 2,
+  Balanced: 0.5,
+  'Crowds are okay': 0,
 }
 
-// Estimate distance between two destinations using coordinates.
-function distanceKm(a: Destination, b: Destination) {
-const rad = Math.PI / 180
+function distanceKm(a: Destination, b: Destination): number {
+  const rad = Math.PI / 180
+  const dLat = (b.lat - a.lat) * rad
+  const dLng = (b.lng - a.lng) * rad
 
-const dLat = (b.lat - a.lat) * rad
-const dLng = (b.lng - a.lng) * rad
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(a.lat * rad) *
+      Math.cos(b.lat * rad) *
+      Math.sin(dLng / 2) ** 2
 
-const h =
-Math.sin(dLat / 2) ** 2 +
-Math.cos(a.lat * rad) *
-Math.cos(b.lat * rad) *
-Math.sin(dLng / 2) ** 2
-
-// 1.3 is an approximate road-distance adjustment.
-return 2 * 6371 * Math.asin(Math.sqrt(h)) * 1.3
+  return 2 * 6371 * Math.asin(Math.sqrt(h)) * 1.3
 }
 
-// Find the selected starting location.
-function findStart(startId: string) {
-return (
-destinations.find((item) => item.id === startId) ??
-destinations[0]
-)
+function findStart(startId: string): Destination {
+  return (
+    destinations.find((item) => item.id === startId) ??
+    destinations[0]
+  )
 }
 
-// Explain why a destination was recommended.
+function getCrowdLevel(destination: Destination): CrowdLevel {
+  const level = Number(destination.typicalCrowd)
+
+  if (level <= 1) return 'Low'
+  if (level === 2) return 'Moderate'
+  return 'High'
+}
+
+function getCrowdRank(level: CrowdLevel): number {
+  if (level === 'Low') return 1
+  if (level === 'Moderate') return 2
+  return 3
+}
+
 function buildReason(
-prefs: Preferences,
-destination: Destination,
-) {
-const matches = destination.interests.filter((item) =>
-prefs.interests.includes(item),
-)
+  prefs: Preferences,
+  destination: Destination,
+): string {
+  const matches = destination.interests.filter((item) =>
+    prefs.interests.includes(item),
+  )
 
-if (matches.length > 0) {
-return Matches your interest in ${matches.join(' and ')}.
+  if (matches.length > 0) {
+    return `Matches your interest in ${matches.join(' and ')}.`
+  }
+
+  return 'Fits your selected travel preferences.'
 }
 
-return 'Fits your budget, pace and crowd preference.'
+function getStartTime(index: number): string {
+  const totalMinutes = 9 * 60 + index * 90
+  const hours = Math.floor(totalMinutes / 60)
+  const minutes = totalMinutes % 60
+
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
 }
 
-// Build one day's travel stops.
 export function buildDay(
-prefs: Preferences,
-list: Destination[],
+  prefs: Preferences,
+  list: Destination[],
 ): PlannedStop[] {
-let previous = findStart(prefs.startId)
+  let previous = findStart(prefs.startId)
 
-return list.map((destination) => {
-const travelKm = distanceKm(previous, destination)
+  return list.map((destination, index) => {
+    const travelKm = distanceKm(previous, destination)
+    previous = destination
 
-previous = destination  
+    const reason = buildReason(prefs, destination)
 
-return {  
-  destination,  
-  travelKm: Math.round(travelKm * 10) / 10,  
-  travelMinutes: Math.round(  
-    (travelKm / speedKmh[prefs.transport]) * 60,  
-  ),  
-  travelCost: Math.round(  
-    travelKm * costPerKm[prefs.transport],  
-  ),  
-  reason: buildReason(prefs, destination),  
+    const reasons: Reason[] = [
+      {
+        kind: 'interest',
+        text: reason,
+      },
+    ]
+
+    return {
+      destination,
+      level: getCrowdLevel(destination),
+      startTime: getStartTime(index),
+      visitMinutes: destination.visitMinutes,
+      travelKm: Math.round(travelKm * 10) / 10,
+      travelMinutes: Math.round(
+        (travelKm / speedKmh[prefs.transport]) * 60,
+      ),
+      travelCost: Math.round(
+        travelKm * costPerKm[prefs.transport],
+      ),
+      reason,
+      reasons,
+    }
+  })
 }
 
-})
-}
-
-// Generate a personalised itinerary.
 export function generateItinerary(
-prefs: Preferences,
-excludedIds: string[] = [],
+  prefs: Preferences,
+  excludedIds: string[] = [],
 ): PlannedStop[][] {
-const start = findStart(prefs.startId)
+  const start = findStart(prefs.startId)
+  const days = Math.max(1, Math.floor(prefs.days))
+  const total = stopsPerDay[prefs.pace] * days
 
-const days = dayCount[prefs.duration]
-const total = stopsPerDay[prefs.pace] * days
+  const availableMinutes = Math.max(
+    60,
+    prefs.hoursPerDay * 60,
+  )
 
-const count =
-prefs.duration === 'Half day'
-? Math.max(1, Math.round(total / 2))
-: total
+  const maxStopsByTime = Math.max(
+    1,
+    Math.floor(availableMinutes / 90),
+  )
 
-// Filter destinations according to preferences.
-const picked = destinations
-.filter(
-(item) =>
-item.id !== prefs.startId &&
-!excludedIds.includes(item.id),
-)
-.filter(
-(item) => item.entryCost <= costCap[prefs.budget],
-)
-.filter(
-(item) =>
-prefs.transport !== 'Walking' ||
-distanceKm(start, item) <= 6,
-)
-.map((item) => {
-const matches = item.interests.filter((interest) =>
-prefs.interests.includes(interest),
-).length
+  const count = Math.min(
+    total,
+    maxStopsByTime * days,
+  )
 
-const score =  
-    matches * 3 -  
-    item.typicalCrowd * crowdWeight[prefs.crowd] -  
-    item.entryCost / 500  
+  const picked = destinations
+    .filter(
+      (item) =>
+        item.id !== prefs.startId &&
+        !excludedIds.includes(item.id),
+    )
+    .filter((item) => item.entryCost <= prefs.budget)
+    .filter(
+      (item) =>
+        prefs.transport !== 'Walking' ||
+        distanceKm(start, item) <= 6,
+    )
+    .map((item) => {
+      const matches = item.interests.filter((interest) =>
+        prefs.interests.includes(interest),
+      ).length
 
-  return { item, score }  
-})  
-.sort((a, b) => b.score - a.score)  
-.slice(0, count)  
-.map((entry) => entry.item)
+      const crowd = getCrowdRank(getCrowdLevel(item))
 
-// Arrange destinations by nearest next stop.
-const ordered: Destination[] = []
-let current = start
-const remaining = [...picked]
+      const score =
+        matches * 3 -
+        crowd * crowdWeight[prefs.crowd] -
+        item.entryCost / 500
 
-while (remaining.length > 0) {
-remaining.sort(
-(a, b) =>
-distanceKm(current, a) - distanceKm(current, b),
-)
+      return { item, score }
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, count)
+    .map((entry) => entry.item)
 
-const next = remaining.shift()  
+  const ordered: Destination[] = []
+  let current = start
+  const remaining = [...picked]
 
-if (!next) break  
+  while (remaining.length > 0) {
+    remaining.sort(
+      (a, b) =>
+        distanceKm(current, a) - distanceKm(current, b),
+    )
 
-ordered.push(next)  
-current = next
+    const next = remaining.shift()
+    if (!next) break
 
+    ordered.push(next)
+    current = next
+  }
+
+  const size = Math.max(
+    1,
+    Math.ceil(ordered.length / days),
+  )
+
+  const result: PlannedStop[][] = []
+
+  for (let index = 0; index < ordered.length; index += size) {
+    result.push(
+      buildDay(prefs, ordered.slice(index, index + size)),
+    )
+  }
+
+  return result
 }
 
-// Divide destinations into separate days.
-const size = Math.max(1, Math.ceil(ordered.length / days))
-const result: PlannedStop[][] = []
+export function summarize(
+  _prefs: Preferences,
+  days: PlannedStop[][],
+) {
+  const stops = days.flat()
 
-for (let index = 0; index < ordered.length; index += size) {
-result.push(
-buildDay(prefs, ordered.slice(index, index + size)),
-)
-}
+  return {
+    stops: stops.length,
 
-return result
-}
+    cost: stops.reduce(
+      (sum, stop) =>
+        sum +
+        stop.destination.entryCost +
+        stop.travelCost,
+      0,
+    ),
 
-// Calculate total stops, estimated cost and time.
-export function summarize(days: PlannedStop[][]) {
-const stops = days.flat()
+    minutes: stops.reduce(
+      (sum, stop) =>
+        sum +
+        stop.visitMinutes +
+        stop.travelMinutes,
+      0,
+    ),
 
-return {
-stops: stops.length,
+    local: stops.filter(
+      (stop) => stop.destination.local === true,
+    ).length,
 
-cost: stops.reduce(  
-  (sum, stop) =>  
-    sum +  
-    stop.destination.entryCost +  
-    stop.travelCost,  
-  0,  
-),  
+    highIncluded: stops.filter(
+      (stop) => stop.level === 'High',
+    ).length,
 
-minutes: stops.reduce(  
-  (sum, stop) =>  
-    sum +  
-    stop.destination.visitMinutes +  
-    stop.travelMinutes,  
-  0,  
-),
-
-}
+    highLeftOut: 0,
+  }
 }
