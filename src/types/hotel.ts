@@ -1,4 +1,3 @@
-feature/gaurav-hotel
 export type HotelProfile = {
   name: string
   rooms: number
@@ -12,18 +11,3 @@ export type MonthlyUsage = {
   energy: number
   waste: number
 }
-=======
-export type HotelProfile = {
-  name: string
-  rooms: number
-  city: string
-  isDemo: boolean
-}
-
-export type MonthlyUsage = {
-  month: string
-  water: number
-  energy: number
-  waste: number
-}
-main
