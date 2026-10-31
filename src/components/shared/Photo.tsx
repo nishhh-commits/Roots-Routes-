@@ -1,8 +1,10 @@
+import { useState } from 'react'
+
 type PhotoProps = {
   src: string
   alt: string
   className?: string
-  fallback?: 'none' | 'placeholder'
+  fallback?: 'none' | 'placeholder' | 'block'
 }
 
 export default function Photo({
@@ -11,19 +13,31 @@ export default function Photo({
   className = '',
   fallback = 'placeholder',
 }: PhotoProps) {
+  const [failed, setFailed] = useState(false)
+
+  if (failed) {
+    if (fallback === 'none') {
+      return null
+    }
+
+    return (
+      <div
+        role="img"
+        aria-label={alt || 'Image unavailable'}
+        className={`flex items-center justify-center bg-sand-200 text-ink-700 ${className}`}
+      >
+        Image unavailable
+      </div>
+    )
+  }
+
   return (
     <img
       src={src}
       alt={alt}
       className={`block object-cover ${className}`}
-      onError={(event) => {
-        if (fallback === 'none') {
-          event.currentTarget.style.display = 'none'
-        } else {
-          event.currentTarget.src =
-            'https://placehold.co/600x400?text=Image+Unavailable'
-        }
-      }}
+      loading="lazy"
+      onError={() => setFailed(true)}
     />
   )
 }
