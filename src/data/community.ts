@@ -1,0 +1,48 @@
+import type { CommunityPlace } from '../types/community'
+
+export const communityPlaces: CommunityPlace[] = [
+  {
+    id: 'c1',
+    name: 'Ahar Cenotaphs',
+    description: 'A quiet cluster of royal memorials, usually calmer than the City Palace.',
+    category: 'Heritage',
+    location: 'Ahar, Udaipur',
+    submittedBy: 'Demo Contributor',
+    submittedOn: '2026-10-01',
+    status: 'approved',
+    isDemo: true,
+  },
+  {
+    id: 'c2',
+    name: 'Shilpgram',
+    description: 'A crafts village showing regional architecture and handicrafts.',
+    category: 'Craft',
+    location: 'Havala, Udaipur',
+    submittedBy: 'Demo Contributor',
+    submittedOn: '2026-10-03',
+    status: 'approved',
+    isDemo: true,
+  },
+  {
+    id: 'c3',
+    name: 'Badi Lake',
+    description: 'A scenic lake outside the city, suggested for a slower afternoon.',
+    category: 'Nature',
+    location: 'Near Udaipur',
+    submittedBy: 'Demo Contributor',
+    submittedOn: '2026-10-10',
+    status: 'pending',
+    isDemo: true,
+  },
+  {
+    id: 'c4',
+    name: 'Menar Village',
+    description: 'A village known for its wetlands and birdwatching.',
+    category: 'Nature',
+    location: 'Menar, near Udaipur',
+    submittedBy: 'Demo Contributor',
+    submittedOn: '2026-10-12',
+    status: 'pending',
+    isDemo: true,
+  },
+]
