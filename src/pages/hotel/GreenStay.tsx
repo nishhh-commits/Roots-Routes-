@@ -1,130 +1,154 @@
-import {
-ResponsiveContainer,
-LineChart,
-Line,
-XAxis,
-YAxis,
-Tooltip,
-CartesianGrid,
-} from 'recharts'
+import { hotelProfile, usageUnits } from '../../data/hotel'
+import { breakdowns, indicators } from '../../data/sustainability'
+import { useUsage } from '../../hooks/useUsage'
 
-import type { MonthlyUsage } from '../../types/hotel'
+import UsageChart from '../../components/hotel/UsageChart'
+import IndicatorList from '../../components/hotel/IndicatorList'
+import BreakdownChart from '../../components/hotel/BreakdownChart'
+import LogUsageForm from '../../components/hotel/LogUsageForm'
 
-type Props = {
-title: string
-unit: string
-dataKey: 'water' | 'energy' | 'waste'
-data: MonthlyUsage[]
-color: string
-}
+type Key = 'water' | 'energy' | 'waste'
 
-export default function UsageChart({
-title,
-unit,
-dataKey,
-data,
-color,
-}: Props) {
+export default function GreenStay() {
+  const { usage, addMonth, reset } = useUsage()
 
-// Check whether data is available
-if (!data || data.length === 0) {
-return (
-<section className="rounded-lg border border-sand-200 bg-white p-5">
-<h2 className="text-lg font-semibold text-plum-900">
-{title}
-</h2>
+  const first = usage[0]
+  const last = usage[usage.length - 1]
 
-    <p className="mt-4 text-ink-500">
-      No usage data available.
-    </p>
-  </section>
-)
+  function change(key: Key): number {
+    if (!first || !last) return 0
 
-}
+    const firstValue = first[key]
+    const lastValue = last[key]
 
-// Calculate first and latest month values
-const first = data[0][dataKey]
-const last = data[data.length - 1][dataKey]
+    if (firstValue === 0) return 0
 
-// Calculate percentage change
-const change =
-first === 0
-? 0
-: Math.round(((last - first) / first) * 100)
+    return Math.round(
+      ((lastValue - firstValue) / firstValue) * 100
+    )
+  }
 
-return (
-<section className="rounded-lg border border-sand-200 bg-white p-5">
+  const insights =
+    first && last
+      ? [
+          `Water use changed by ${change('water')}% between ${first.month} and ${last.month}.`,
 
-  {/* Chart Heading */}
+          `Energy use changed by ${change('energy')}% over the same period.`,
 
-  <div className="flex items-baseline justify-between gap-2">
+          `Waste per month changed by ${change('waste')}%, from ${first.waste} kg to ${last.waste} kg.`,
 
-    <h2 className="text-lg font-semibold text-plum-900">
-      {title}
-    </h2>
+          'Cooling is the largest share of energy use in the sample breakdown, so it is the first place to look for savings.',
+        ]
+      : ['No usage data available. Please log a month to see insights.']
 
-    <p className="text-sm text-ink-500">
-      {change > 0 ? '+' : ''}
-      {change}% since {data[0].month}
-    </p>
+  return (
+    <div className="mx-auto max-w-6xl px-6 py-12">
 
-  </div>
+      <p className="text-sm font-medium uppercase tracking-wide text-leaf-700">
+        GreenStay OS
+      </p>
 
-  {/* Latest Usage */}
+      <h1 className="mt-2 text-4xl font-semibold text-plum-900">
+        {hotelProfile.name}
+      </h1>
 
-  <p className="mt-2 text-3xl font-semibold text-ink-900">
+      <p className="mt-3 max-w-2xl text-ink-500">
+        Resource trends for {hotelProfile.rooms} rooms in {hotelProfile.city}.
+        {hotelProfile.isDemo &&
+          ' Starter figures are demo data for the prototype.'}
+      </p>
 
-    {last.toLocaleString('en-IN')}
+      {/* Trends */}
+      <h2 className="mt-10 text-2xl font-semibold text-plum-900">
+        Trends
+      </h2>
 
-    <span className="text-base font-normal text-ink-500">
-      {' '}{unit}
-    </span>
-
-  </p>
-
-  {/* Line Chart */}
-
-  <div className="mt-4 h-56">
-
-    <ResponsiveContainer width="100%" height="100%">
-
-      <LineChart data={data}>
-
-        <CartesianGrid
-          stroke="#e9dcc6"
-          vertical={false}
+      <div className="mt-4 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <UsageChart
+          title="Water"
+          unit={usageUnits.water}
+          dataKey="water"
+          data={usage}
+          color="#1e8f7b"
         />
 
-        <XAxis
-          dataKey="month"
-          tick={{ fontSize: 12 }}
-          stroke="#6b6275"
+        <UsageChart
+          title="Energy"
+          unit={usageUnits.energy}
+          dataKey="energy"
+          data={usage}
+          color="#b8794a"
         />
 
-        <YAxis
-          tick={{ fontSize: 12 }}
-          stroke="#6b6275"
-          width={55}
+        <UsageChart
+          title="Waste"
+          unit={usageUnits.waste}
+          dataKey="waste"
+          data={usage}
+          color="#5b3590"
         />
+      </div>
 
-        <Tooltip />
+      {/* Log Usage */}
+      <h2 className="mt-12 text-2xl font-semibold text-plum-900">
+        Log a month
+      </h2>
 
-        <Line
-          type="monotone"
-          dataKey={dataKey}
-          stroke={color}
-          strokeWidth={2}
-          dot={false}
-          activeDot={{ r: 5 }}
-        />
+      <div className="mt-4">
+        <LogUsageForm onSubmit={addMonth} />
 
-      </LineChart>
+        <button
+          type="button"
+          onClick={reset}
+          className="mt-4 text-sm text-ink-500 hover:text-ink-900"
+        >
+          Reset to demo data
+        </button>
+      </div>
 
-    </ResponsiveContainer>
+      {/* Sustainability Indicators */}
+      <h2 className="mt-12 text-2xl font-semibold text-plum-900">
+        Sustainability indicators
+      </h2>
 
-  </div>
+      <div className="mt-4 max-w-3xl">
+        <IndicatorList indicators={indicators} />
+      </div>
 
-</section>
+      {/* Breakdown */}
+      <h2 className="mt-12 text-2xl font-semibold text-plum-900">
+        Where it goes
+      </h2>
 
-)
+      <p className="mt-1 text-sm text-ink-500">
+        Sample breakdown figures (demo data).
+      </p>
+
+      <div className="mt-4 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {breakdowns.map((breakdown) => (
+          <BreakdownChart
+            key={breakdown.key}
+            breakdown={breakdown}
+          />
+        ))}
+      </div>
+
+      {/* Insights */}
+      <h2 className="mt-12 text-2xl font-semibold text-plum-900">
+        Insights
+      </h2>
+
+      <ul className="mt-4 max-w-3xl">
+        {insights.map((insight, index) => (
+          <li
+            key={index}
+            className="border-t border-sand-300 py-3 text-ink-700"
+          >
+            {insight}
+          </li>
+        ))}
+      </ul>
+
+    </div>
+  )
 }
