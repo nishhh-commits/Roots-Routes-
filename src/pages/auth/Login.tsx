@@ -1,3 +1,10 @@
+ feature/gaurav-hotel
+import PlaceholderPage from '../../components/shared/PlaceholderPage'
+
+export default function Login() {
+  return <PlaceholderPage title="Login" owner="Nisha" />
+}
+=======
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth, type Role } from '../../services/auth'
@@ -110,3 +117,4 @@ export default function Login() {
     </div>
   )
 }
+main

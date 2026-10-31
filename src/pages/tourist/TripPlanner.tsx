@@ -1,3 +1,10 @@
+feature/gaurav-hotel
+import PlaceholderPage from '../../components/shared/PlaceholderPage'
+
+export default function TripPlanner() {
+  return <PlaceholderPage title="Trip Planner" owner="Nisha" />
+}
+=======
 import { useState } from 'react'
 import { artisans } from '../../data/artisans'
 import ArtisanCard from '../../components/tourist/ArtisanCard'
@@ -40,3 +47,4 @@ export default function KalaConnect() {
     </div>
   )
 }
+main
