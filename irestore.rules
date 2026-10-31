@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(hotelId) {
+      return request.auth != null
+        && get(/databases/$(database)/documents/hotels/$(hotelId)).data.ownerUid == request.auth.uid;
+    }
+
+    function validReading(hotelId, readingId) {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['id', 'hotelId', 'resource', 'value', 'unit', 'deviceId', 'recordedAt', 'source', 'receivedAt'])
+        && d.keys().hasAll(['id', 'hotelId', 'resource', 'value', 'unit', 'deviceId', 'recordedAt', 'source', 'receivedAt'])
+        && d.id == readingId
+        && d.hotelId == hotelId
+        && d.resource in ['water', 'energy', 'waste']
+        && d.value is number && d.value > 0 && d.value <= 2000
+        && d.unit == (d.resource == 'water' ? 'kL' : (d.resource == 'energy' ? 'kWh' : 'kg'))
+        && d.source in ['manual', 'simulated-device']
+        && (d.source == 'simulated-device'
+            ? (d.deviceId is string && d.deviceId.matches('SIM-.*'))
+            : d.deviceId == null)
+        && d.recordedAt is string && d.recordedAt.size() == 24
+        && d.receivedAt == request.time;
+    }
+
+    match /hotels/{hotelId} {
+      allow read: if isOwner(hotelId);
+      allow write: if false;
+
+      match /readings/{readingId} {
+        allow read: if isOwner(hotelId);
+        allow create: if isOwner(hotelId) && validReading(hotelId, readingId);
+        allow update, delete: if false;
+      }
+    }
+  }
+}
