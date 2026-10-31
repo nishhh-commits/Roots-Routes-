@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { Artisan } from '../../types/artisan'
 
@@ -7,6 +8,19 @@ type Props = {
 }
 
 export default function ArtisanModal({ artisan, onClose }: Props) {
+  useEffect(() => {
+    if (!artisan) {
+      return
+    }
+    function handleKey(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [artisan, onClose])
+
   return (
     <AnimatePresence>
       {artisan && (
@@ -26,6 +40,7 @@ export default function ArtisanModal({ artisan, onClose }: Props) {
             onClick={(event) => event.stopPropagation()}
             role="dialog"
             aria-modal="true"
+            aria-label={artisan.craft}
             className="w-full max-w-lg rounded-t-xl bg-cream-50 p-6 md:rounded-xl"
           >
             <p className="text-xs uppercase tracking-wide text-sandstone-600">{artisan.category}</p>
