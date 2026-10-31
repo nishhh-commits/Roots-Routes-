@@ -3,6 +3,7 @@ import { artisans } from '../../data/artisans'
 import type { Artisan } from '../../types/artisan'
 import ArtisanCard from '../../components/tourist/ArtisanCard'
 import ArtisanModal from '../../components/tourist/ArtisanModal'
+import ExperienceList from '../../components/tourist/ExperienceList'
 
 const categories = ['All', 'Painting', 'Textile', 'Puppetry', 'Metalwork']
 
@@ -39,6 +40,11 @@ export default function KalaConnect() {
         ) : (
           visible.map((artisan) => <ArtisanCard key={artisan.id} artisan={artisan} onOpen={setSelected} />)
         )}
+      </div>
+      <h2 className="mt-14 text-2xl font-semibold text-plum-900">Workshops and experiences</h2>
+      <p className="mt-2 max-w-2xl text-ink-500">Hands-on ways to meet the culture behind the craft.</p>
+      <div className="mt-6">
+        <ExperienceList />
       </div>
       <ArtisanModal artisan={selected} onClose={() => setSelected(null)} />
     </div>

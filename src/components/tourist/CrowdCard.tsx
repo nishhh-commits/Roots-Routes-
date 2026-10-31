@@ -32,6 +32,9 @@ export default function CrowdCard({ report, all }: Props) {
         {timeAgo(report.minutesAgo)} · {freshnessLabel(report.minutesAgo)} · {report.reports} reports · {report.confidence} confidence
       </p>
       <span className="mt-2 inline-block rounded bg-sand-200 px-2 py-0.5 text-xs text-ink-700">Sample crowd report</span>
+      {freshnessLabel(report.minutesAgo) === 'Stale' && (
+        <p className="mt-2 text-sm text-ink-500">This report is old. Check on site before you travel.</p>
+      )}
       {quieter.length > 0 && (
         <p className="mt-3 text-sm text-ink-700">
           Quieter nearby: {quieter.map((item) => `${item.name} (${item.level})`).join(', ')}
