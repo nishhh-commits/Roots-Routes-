@@ -17,6 +17,7 @@ const hotelLinks = [
 export default function MainLayout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+
   const links = user?.role === 'hotel' ? hotelLinks : touristLinks
 
   function handleLogout() {
