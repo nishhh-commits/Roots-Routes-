@@ -1,4 +1,4 @@
-import type { Preferences } from '../types/planner'
+import type { Preferences } from '../utils/planner'
 
 export type SavedTrip = {
   id: string
@@ -8,7 +8,7 @@ export type SavedTrip = {
   days: string[][]
 }
 
-const KEY = 'rr-saved-trips'
+const KEY = 'rr-saved-trips-v2'
 
 export function loadTrips(): SavedTrip[] {
   try {
