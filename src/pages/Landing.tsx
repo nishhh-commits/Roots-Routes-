@@ -1,3 +1,10 @@
+ feature/gaurav-hotel
+import PlaceholderPage from '../components/shared/PlaceholderPage'
+
+export default function Landing() {
+  return <PlaceholderPage title="Landing Page" owner="Nisha" />
+}
+=======
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -216,3 +223,4 @@ export default function Landing() {
     </div>
   )
 }
+ main
