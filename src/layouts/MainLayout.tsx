@@ -1,4 +1,5 @@
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { useAuth } from '../services/auth'
 
 const touristLinks = [
@@ -16,7 +17,8 @@ const hotelLinks = [
 
 export default function MainLayout() {
   const { user, logout } = useAuth()
-  const navigate = useNavigate()
+   const navigate = useNavigate()
+  const location = useLocation()
 
   const links = user?.role === 'hotel' ? hotelLinks : touristLinks
 
@@ -63,7 +65,14 @@ export default function MainLayout() {
       </header>
 
       <main>
-        <Outlet />
+             <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25 }}
+        >
+          <Outlet />
+        </motion.div>
       </main>
     </div>
   )
