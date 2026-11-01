@@ -1,5 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
+import { getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -10,12 +11,33 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig)
+export const firebaseConfigured = Boolean(
+  firebaseConfig.apiKey &&
+  firebaseConfig.authDomain &&
+  firebaseConfig.projectId &&
+  firebaseConfig.appId,
+)
 
-const db = getFirestore(app)
+const app = firebaseConfigured
+  ? getApps().length > 0
+    ? getApp()
+    : initializeApp(firebaseConfig)
+  : null
 
 export function getDb() {
-  return db
+  if (!app) {
+    throw new Error('Firebase is not configured. Check your .env file.')
+  }
+
+  return getFirestore(app)
 }
 
-export { app, db }
+export function getFirebaseAuth() {
+  if (!app) {
+    throw new Error('Firebase authentication is not configured.')
+  }
+
+  return getAuth(app)
+}
+
+export { app }
