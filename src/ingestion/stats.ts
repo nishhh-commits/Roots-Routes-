@@ -5,45 +5,66 @@ export type ResourceSummary = {
   count: number
   total: number
   average: number
-  unit: string
+  latest: Reading
+  previous: Reading | null
+  changePct: number | null
 }
 
 export type FeedSummary = {
   totalReadings: number
+  latest: Reading | null
   perResource: ResourceSummary[]
 }
 
-export function summariseFeed(readings: Reading[]): FeedSummary {
-  const resources: ReadingResource[] = [
-    'water',
-    'energy',
-    'waste',
-  ]
+const resources: ReadingResource[] = ['water', 'energy', 'waste']
 
-  const perResource: ResourceSummary[] = resources.map((resource) => {
-    const matchingReadings = readings.filter(
+function sortNewestFirst(readings: Reading[]): Reading[] {
+  return [...readings].sort(
+    (a, b) =>
+      new Date(b.recordedAt).getTime() -
+      new Date(a.recordedAt).getTime(),
+  )
+}
+
+export function summariseFeed(readings: Reading[]): FeedSummary {
+  const sorted = sortNewestFirst(readings)
+
+  const perResource: ResourceSummary[] = resources.flatMap((resource) => {
+    const matching = sorted.filter(
       (reading) => reading.resource === resource,
     )
 
-    const total = matchingReadings.reduce(
+    if (matching.length === 0) return []
+
+    const latest = matching[0]
+    const previous = matching[1] ?? null
+
+    const total = matching.reduce(
       (sum, reading) => sum + reading.value,
       0,
     )
 
-    return {
+    const changePct =
+      previous && previous.value !== 0
+        ? Math.round(
+            ((latest.value - previous.value) / previous.value) * 100,
+          )
+        : null
+
+    return [{
       resource,
-      count: matchingReadings.length,
+      count: matching.length,
       total,
-      average:
-        matchingReadings.length > 0
-          ? total / matchingReadings.length
-          : 0,
-      unit: matchingReadings[0]?.unit ?? '',
-    }
+      average: total / matching.length,
+      latest,
+      previous,
+      changePct,
+    }]
   })
 
   return {
-    totalReadings: readings.length,
+    totalReadings: sorted.length,
+    latest: sorted[0] ?? null,
     perResource,
   }
 }
