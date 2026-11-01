@@ -27,13 +27,15 @@ function loadPlaces(): CommunityPlace[] {
 export default function CommunityDiscover() {
   const [places, setPlaces] = useState<CommunityPlace[]>(loadPlaces)
   const [tab, setTab] = useState<Tab>('Explore')
-  const [moderator, setModerator] = useState(false)
+    const [moderator, setModerator] = useState(false)
+  const [saveError, setSaveError] = useState(false)
 
   useEffect(() => {
-    try {
+        try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(places))
+      setSaveError(false)
     } catch {
-      return
+      setSaveError(true)
     }
   }, [places])
 

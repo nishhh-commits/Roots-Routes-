@@ -20,8 +20,8 @@ export default function SubmitPlaceForm({ onSubmit }: { onSubmit: (place: NewPla
       setImage(undefined)
       return
     }
-    if (file.size > 700 * 1024) {
-      setError('Image must be smaller than 700 KB.')
+    if (file.size > 400 * 1024) {
+      setError('Image must be smaller than 400 KB.')
       event.target.value = ''
       return
     }
@@ -76,7 +76,7 @@ export default function SubmitPlaceForm({ onSubmit }: { onSubmit: (place: NewPla
         <input value={location} onChange={(e) => setLocation(e.target.value)} className={inputClass} />
       </label>
       <label className="block text-sm text-ink-700">
-        Photo (optional, under 700 KB)
+        Photo (optional, under 400 KB)
         <input type="file" accept="image/*" onChange={handleImage} className="mt-1 block text-sm" />
       </label>
       {image && <img src={image} alt="Preview" className="h-28 rounded-md object-cover" />}

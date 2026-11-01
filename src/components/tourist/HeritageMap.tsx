@@ -43,7 +43,7 @@ export default function HeritageMap({ reports }: { reports: CrowdReport[] }) {
         </MapContainer>
       </div>
       <p className="mt-3 text-sm text-ink-500">
-        Green is low, sandstone is moderate, purple is high. Prototype data, not live detection.
+        Green is low, sandstone is moderate, purple is high. Prototype data, not live detection. Map tiles need internet; the list view works offline.
       </p>
     </div>
   )
