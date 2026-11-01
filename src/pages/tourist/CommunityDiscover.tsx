@@ -4,6 +4,7 @@ import type { CommunityPlace, PlaceStatus } from '../../types/community'
 import PlaceCard from '../../components/community/PlaceCard'
 import SubmitPlaceForm, { type NewPlace } from '../../components/community/SubmitPlaceForm'
 import ModerationList from '../../components/community/ModerationList'
+import CommunityFlow from '../../components/community/CommunityFlow'
 
 const STORAGE_KEY = 'rr-community-places'
 
@@ -73,6 +74,7 @@ export default function CommunityDiscover() {
         Only places approved by a moderator appear on Explore. Starter entries are prototype data.
       </p>
 
+      <CommunityFlow />
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
         <div className="flex gap-2">
           {tabs.map((item) => (

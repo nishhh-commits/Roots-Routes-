@@ -4,6 +4,7 @@ import type { Artisan } from '../../types/artisan'
 import ArtisanCard from '../../components/tourist/ArtisanCard'
 import ArtisanModal from '../../components/tourist/ArtisanModal'
 import ExperienceList from '../../components/tourist/ExperienceList'
+import WhyArtisans from '../../components/tourist/WhyArtisans'
 
 const categories = ['All', 'Painting', 'Textile', 'Puppetry', 'Metalwork']
 
@@ -19,7 +20,8 @@ export default function KalaConnect() {
       <p className="mt-3 max-w-2xl text-ink-500">
         Discover local artisans, learn their craft, and book a workshop. Profiles shown are prototype data.
       </p>
-      <div className="mt-8 flex flex-wrap gap-2">
+      <WhyArtisans />
+      <div className="mt-10 flex flex-wrap gap-2">
         {categories.map((category) => (
           <button
             key={category}

@@ -21,6 +21,7 @@ export default function ArtisanCard({ artisan, onOpen }: Props) {
         <h3 className="mt-1 text-2xl font-semibold text-plum-900">{artisan.craft}</h3>
         <p className="text-sm text-ink-500">{artisan.name} · {artisan.neighborhood}</p>
         <p className="mt-3 text-ink-700">{artisan.story}</p>
+        <p className="mt-2 text-sm text-ink-500">Visitors can: {artisan.visitorsCan.slice(0, 2).join(' · ')}</p>
         <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 pt-4 text-sm text-ink-700">
           <span>₹{artisan.workshopPrice} · {artisan.workshopDuration}</span>
           <button onClick={() => onOpen(artisan)} className="text-plum-700 underline">

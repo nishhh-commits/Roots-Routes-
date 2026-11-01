@@ -5,6 +5,7 @@ export type Artisan = {
   category: 'Painting' | 'Textile' | 'Puppetry' | 'Metalwork'
   neighborhood: string
   story: string
+  visitorsCan: string[]
   workshopPrice: number
   workshopDuration: string
   contact: string

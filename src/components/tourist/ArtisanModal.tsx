@@ -57,7 +57,13 @@ export default function ArtisanModal({ artisan, onClose }: Props) {
             <p className="text-xs uppercase tracking-wide text-sandstone-600">{artisan.category}</p>
             <h2 className="mt-1 text-2xl font-semibold text-plum-900">{artisan.craft}</h2>
             <p className="text-sm text-ink-500">{artisan.name} · {artisan.neighborhood}</p>
-            <p className="mt-4 text-ink-700">{artisan.story}</p>
+           <p className="mt-4 text-ink-700">{artisan.story}</p>
+            <p className="mt-4 text-sm font-medium text-plum-900">What you can experience</p>
+            <ul className="mt-1 list-disc pl-5 text-sm text-ink-700">
+              {artisan.visitorsCan.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
             <div className="mt-4 border-y border-sand-300 py-3 text-sm text-ink-700">
               <p>Workshop: {artisan.workshopDuration} · ₹{artisan.workshopPrice} per person</p>
               <p className="mt-1">Contact: {artisan.contact}</p>

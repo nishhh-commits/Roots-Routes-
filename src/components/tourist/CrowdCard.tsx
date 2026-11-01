@@ -25,9 +25,10 @@ function Meter({ level }: { level: CrowdLevel }) {
 type Props = {
   report: CrowdReport
   all: CrowdReport[]
+  inTrip?: boolean
 }
 
-export default function CrowdCard({ report, all }: Props) {
+export default function CrowdCard({ report, all, inTrip }: Props) {
   const quieter = report.alternativeIds
     .map((id) => all.find((item) => item.destinationId === id))
     .filter((item): item is CrowdReport => item !== undefined && rank[item.level] < rank[report.level])
@@ -38,6 +39,9 @@ export default function CrowdCard({ report, all }: Props) {
         <div>
           <h3 className="text-xl font-semibold text-plum-900">{report.name}</h3>
           <p className="text-sm text-ink-500">{report.area}</p>
+          {inTrip && (
+            <span className="mt-1 inline-block rounded bg-plum-100 px-2 py-0.5 text-xs text-plum-700">In your itinerary</span>
+          )}
         </div>
         <div className="flex flex-col items-end gap-2">
           <Meter level={report.level} />
@@ -47,7 +51,7 @@ export default function CrowdCard({ report, all }: Props) {
       <p className="mt-3 text-sm text-ink-700">
         {timeAgo(report.minutesAgo)} · {freshnessLabel(report.minutesAgo)} · {report.reports} reports · {report.confidence} confidence
       </p>
-      <span className="mt-2 inline-block rounded bg-sand-200 px-2 py-0.5 text-xs text-ink-700">Sample crowd report</span>
+      <span className="mt-2 inline-block rounded bg-sand-200 px-2 py-0.5 text-xs text-ink-700">Demo / simulated crowd data</span>
       {freshnessLabel(report.minutesAgo) === 'Stale' && (
         <p className="mt-2 text-sm text-ink-500">This report is old. Check on site before you travel.</p>
       )}
