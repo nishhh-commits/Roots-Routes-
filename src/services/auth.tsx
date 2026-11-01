@@ -56,6 +56,7 @@ export function AuthProvider({
 }) {
   const [user, setUser] = useState<User | null>(readStoredUser)
 
+<<<<<<< HEAD
   async function login(
     email: string,
     password: string,
@@ -63,6 +64,10 @@ export function AuthProvider({
   ): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, 700))
 
+=======
+  async function login(email: string, password: string, role: Role) {
+    await new Promise((resolve) => setTimeout(resolve, 300))
+>>>>>>> origin/feature/nisha-firestore
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       throw new Error('Enter a valid email address.')
     }

@@ -1,0 +1,255 @@
+import { destinations } from '../data/destinations'
+import type { Destination } from '../types/destination'
+import type { CrowdLevel } from '../types/crowd'
+import type {
+  CrowdPreference,
+  Pace,
+  PlannedStop,
+  Preferences,
+  Reason,
+  Transport,
+} from '../types/planner'
+
+const stopsPerDay: Record<Pace, number> = {
+  Relaxed: 2,
+  Balanced: 3,
+  'Fast-paced': 4,
+}
+
+const speedKmh: Record<Transport, number> = {
+  Walking: 4,
+  'Public transport': 15,
+  'Two-wheeler': 25,
+  Car: 25,
+}
+
+const costPerKm: Record<Transport, number> = {
+  Walking: 0,
+  'Public transport': 8,
+  'Two-wheeler': 5,
+  Car: 15,
+}
+
+const crowdWeight: Record<CrowdPreference, number> = {
+  'Avoid crowded': 2,
+  Balanced: 0.5,
+  'Crowds are okay': 0,
+}
+
+function distanceKm(a: Destination, b: Destination): number {
+  const rad = Math.PI / 180
+  const dLat = (b.lat - a.lat) * rad
+  const dLng = (b.lng - a.lng) * rad
+
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(a.lat * rad) *
+      Math.cos(b.lat * rad) *
+      Math.sin(dLng / 2) ** 2
+
+  return 2 * 6371 * Math.asin(Math.sqrt(h)) * 1.3
+}
+
+function findStart(startId: string): Destination {
+  return (
+    destinations.find((item) => item.id === startId) ??
+    destinations[0]
+  )
+}
+
+function getCrowdLevel(destination: Destination): CrowdLevel {
+  const level = Number(destination.typicalCrowd)
+
+  if (level <= 1) return 'Low'
+  if (level === 2) return 'Moderate'
+  return 'High'
+}
+
+function getCrowdRank(level: CrowdLevel): number {
+  if (level === 'Low') return 1
+  if (level === 'Moderate') return 2
+  return 3
+}
+
+function buildReason(
+  prefs: Preferences,
+  destination: Destination,
+): string {
+  const matches = destination.interests.filter((item) =>
+    prefs.interests.includes(item),
+  )
+
+  if (matches.length > 0) {
+    return `Matches your interest in ${matches.join(' and ')}.`
+  }
+
+  return 'Fits your selected travel preferences.'
+}
+
+function getStartTime(index: number): string {
+  const totalMinutes = 9 * 60 + index * 90
+  const hours = Math.floor(totalMinutes / 60)
+  const minutes = totalMinutes % 60
+
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
+}
+
+export function buildDay(
+  prefs: Preferences,
+  list: Destination[],
+): PlannedStop[] {
+  let previous = findStart(prefs.startId)
+
+  return list.map((destination, index) => {
+    const travelKm = distanceKm(previous, destination)
+    previous = destination
+
+    const reason = buildReason(prefs, destination)
+
+    const reasons: Reason[] = [
+      {
+        kind: 'interest',
+        text: reason,
+      },
+    ]
+
+    return {
+      destination,
+      level: getCrowdLevel(destination),
+      startTime: getStartTime(index),
+      visitMinutes: destination.visitMinutes,
+      travelKm: Math.round(travelKm * 10) / 10,
+      travelMinutes: Math.round(
+        (travelKm / speedKmh[prefs.transport]) * 60,
+      ),
+      travelCost: Math.round(
+        travelKm * costPerKm[prefs.transport],
+      ),
+      reason,
+      reasons,
+    }
+  })
+}
+
+export function generateItinerary(
+  prefs: Preferences,
+  excludedIds: string[] = [],
+): PlannedStop[][] {
+  const start = findStart(prefs.startId)
+  const days = Math.max(1, Math.floor(prefs.days))
+  const total = stopsPerDay[prefs.pace] * days
+
+  const availableMinutes = Math.max(
+    60,
+    prefs.hoursPerDay * 60,
+  )
+
+  const maxStopsByTime = Math.max(
+    1,
+    Math.floor(availableMinutes / 90),
+  )
+
+  const count = Math.min(
+    total,
+    maxStopsByTime * days,
+  )
+
+  const picked = destinations
+    .filter(
+      (item) =>
+        item.id !== prefs.startId &&
+        !excludedIds.includes(item.id),
+    )
+    .filter((item) => item.entryCost <= prefs.budget)
+    .filter(
+      (item) =>
+        prefs.transport !== 'Walking' ||
+        distanceKm(start, item) <= 6,
+    )
+    .map((item) => {
+      const matches = item.interests.filter((interest) =>
+        prefs.interests.includes(interest),
+      ).length
+
+      const crowd = getCrowdRank(getCrowdLevel(item))
+
+      const score =
+        matches * 3 -
+        crowd * crowdWeight[prefs.crowd] -
+        item.entryCost / 500
+
+      return { item, score }
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, count)
+    .map((entry) => entry.item)
+
+  const ordered: Destination[] = []
+  let current = start
+  const remaining = [...picked]
+
+  while (remaining.length > 0) {
+    remaining.sort(
+      (a, b) =>
+        distanceKm(current, a) - distanceKm(current, b),
+    )
+
+    const next = remaining.shift()
+    if (!next) break
+
+    ordered.push(next)
+    current = next
+  }
+
+  const size = Math.max(
+    1,
+    Math.ceil(ordered.length / days),
+  )
+
+  const result: PlannedStop[][] = []
+
+  for (let index = 0; index < ordered.length; index += size) {
+    result.push(
+      buildDay(prefs, ordered.slice(index, index + size)),
+    )
+  }
+
+  return result
+}
+
+export function summarize(
+  _prefs: Preferences,
+  days: PlannedStop[][],
+) {
+  const stops = days.flat()
+
+  return {
+    stops: stops.length,
+
+    cost: stops.reduce(
+      (sum, stop) =>
+        sum +
+        stop.destination.entryCost +
+        stop.travelCost,
+      0,
+    ),
+
+    minutes: stops.reduce(
+      (sum, stop) =>
+        sum +
+        stop.visitMinutes +
+        stop.travelMinutes,
+      0,
+    ),
+
+    local: stops.filter(
+      (stop) => stop.destination.local === true,
+    ).length,
+
+    highIncluded: stops.filter(
+      (stop) => stop.level === 'High',
+    ).length,
+
+    highLeftOut: 0,
+  }
+}

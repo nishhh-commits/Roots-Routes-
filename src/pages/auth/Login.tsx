@@ -7,20 +7,23 @@ const roles: { value: Role; label: string }[] = [
   { value: 'hotel', label: 'Hotel / Hospitality' },
 ]
 
+const inputClass =
+  'mt-1 w-full rounded-md border border-sand-300 bg-white px-4 py-3 text-sm outline-none focus:border-plum-700'
+
 export default function Login() {
   const { login } = useAuth()
   const navigate = useNavigate()
 
+  const [role, setRole] = useState<Role>('tourist')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [role, setRole] = useState<Role>('tourist')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   async function signIn(
     emailValue: string,
     passwordValue: string,
-    roleValue: Role,
+    roleValue: Role
   ) {
     setError('')
     setLoading(true)
@@ -30,7 +33,7 @@ export default function Login() {
       navigate(roleValue === 'hotel' ? '/hotel' : '/dashboard')
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Something went wrong.',
+        err instanceof Error ? err.message : 'Login failed. Please try again.'
       )
     } finally {
       setLoading(false)
@@ -42,19 +45,16 @@ export default function Login() {
     signIn(email.trim(), password, role)
   }
 
-  const inputClass =
-    'mt-1 w-full rounded-md border border-sand-300 bg-white px-3 py-2 text-ink-900 outline-none focus:border-plum-600'
-
   return (
-    <div className="grid min-h-screen md:grid-cols-2">
+    <div className="grid min-h-screen bg-cream-50 md:grid-cols-2">
 
       {/* LEFT BRANDING SECTION */}
       <div className="hidden flex-col justify-between bg-plum-900 p-12 text-cream-50 md:flex">
-        <Link to="/" className="font-display text-xl font-semibold">
+        <Link to="/" className="text-xl font-semibold">
           Roots & Routes
         </Link>
 
-        <p className="font-display text-4xl leading-tight">
+        <p className="text-4xl leading-tight">
           Discover Hidden Gems. Connect with Culture. Travel with Purpose.
         </p>
 
@@ -69,7 +69,7 @@ export default function Login() {
 
           <Link
             to="/"
-            className="text-sm text-sandstone-600 hover:text-plum-900"
+            className="text-sm text-ink-500 hover:text-plum-900"
           >
             ← Back to home
           </Link>
@@ -79,7 +79,7 @@ export default function Login() {
           </h1>
 
           <p className="mt-2 text-sm text-ink-500">
-            Prototype login: use a valid email and a password of 6 or more characters.
+            Sign in to explore meaningful travel experiences.
           </p>
 
           {/* ROLE SELECTION */}
@@ -91,7 +91,7 @@ export default function Login() {
                 onClick={() => setRole(item.value)}
                 className={
                   role === item.value
-                    ? 'rounded-md bg-plum-700 px-3 py-2 text-sm text-cream-50'
+                    ? 'rounded-md bg-plum-700 px-3 py-2 text-sm text-white'
                     : 'rounded-md border border-sand-300 px-3 py-2 text-sm text-ink-700 hover:bg-cream-100'
                 }
               >
@@ -120,7 +120,6 @@ export default function Login() {
               <input
                 type="password"
                 required
-                minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
@@ -137,9 +136,9 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-md bg-plum-700 px-4 py-2.5 text-sm font-medium text-cream-50 transition hover:bg-plum-900 disabled:opacity-60"
+              className="w-full rounded-full bg-plum-700 px-5 py-3 font-medium text-white disabled:opacity-50"
             >
-              {loading ? 'Signing in...' : 'Log in'}
+              {loading ? 'Signing in...' : 'Sign in'}
             </button>
           </form>
 
@@ -158,7 +157,7 @@ export default function Login() {
                 }
                 className="flex-1 rounded-md border border-sand-300 px-3 py-2 text-sm text-ink-700 hover:bg-cream-100"
               >
-                Demo tourist
+                Demo Tourist
               </button>
 
               <button
@@ -169,7 +168,7 @@ export default function Login() {
                 }
                 className="flex-1 rounded-md border border-sand-300 px-3 py-2 text-sm text-ink-700 hover:bg-cream-100"
               >
-                Demo hotel
+                Demo Hotel
               </button>
             </div>
           </div>

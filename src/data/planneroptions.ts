@@ -1,34 +1,26 @@
-import type { Interest } from '../types/destinations'
-
+import type { Interest } from '../types/destination'
 import type {
-  Budget,
   CrowdPreference,
-  Duration,
   Pace,
+  Preferences,
   Transport,
 } from '../types/planner'
 
-export const durations: Duration[] = [
-  'Half day',
-  '1 day',
-  '2 days',
-  '3 days',
-]
+export const dayOptions = [1, 2, 3]
+
+export const hourOptions = [3, 4, 6, 8]
+
+export const budgetOptions = [1000, 2500, 4000, 6000]
 
 export const interests: Interest[] = [
   'Heritage',
+  'Local art',
   'Culture',
   'Food',
   'Nature',
   'Shopping',
   'Photography',
   'Relaxation',
-]
-
-export const budgets: Budget[] = [
-  'Budget',
-  'Moderate',
-  'Premium',
 ]
 
 export const paces: Pace[] = [
@@ -49,3 +41,15 @@ export const transports: Transport[] = [
   'Two-wheeler',
   'Car',
 ]
+
+export const demoPreferences: Preferences = {
+  cityId: 'udaipur',
+  startId: 'jagdish-temple',
+  days: 1,
+  hoursPerDay: 6,
+  budget: 2500,
+  interests: ['Heritage', 'Local art'],
+  pace: 'Relaxed',
+  crowd: 'Balanced',
+  transport: 'Two-wheeler',
+}
