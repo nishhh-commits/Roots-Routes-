@@ -16,8 +16,8 @@ service cloud.firestore {
         && d.resource in ['water', 'energy', 'waste']
         && d.value is number && d.value > 0 && d.value <= 2000
         && d.unit == (d.resource == 'water' ? 'kL' : (d.resource == 'energy' ? 'kWh' : 'kg'))
-        && d.source in ['manual', 'simulated-device']
-        && (d.source == 'simulated-device'
+        && d.source in ['manual', 'simulated-device', 'demo']
+        && (d.source in ['simulated-device', 'demo']
             ? (d.deviceId is string && d.deviceId.matches('SIM-.*'))
             : d.deviceId == null)
         && d.recordedAt is string && d.recordedAt.size() == 24
