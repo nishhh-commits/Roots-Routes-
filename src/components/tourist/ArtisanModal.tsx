@@ -4,6 +4,7 @@ import type { Artisan } from '../../types/artisan'
 import Photo from '../shared/Photo'
 
 
+
 type Props = {
   artisan: Artisan | null
   onClose: () => void
