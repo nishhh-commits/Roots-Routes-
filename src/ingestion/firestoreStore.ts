@@ -9,13 +9,14 @@ import {
   serverTimestamp,
   type DocumentData,
 } from 'firebase/firestore'
+
 import { getDb } from '../services/firebase'
 import type { Reading } from '../types/reading'
 import type { ReadingStore } from './store'
 
-function toReading(data: DocumentData): Reading {
+function toReading(id: string, data: DocumentData): Reading {
   return {
-    id: data.id,
+    id,
     hotelId: data.hotelId,
     resource: data.resource,
     value: data.value,
@@ -27,32 +28,62 @@ function toReading(data: DocumentData): Reading {
 }
 
 function readingsQuery(hotelId: string) {
-  return query(collection(getDb(), 'hotels', hotelId, 'readings'), orderBy('recordedAt'))
+  return query(
+    collection(getDb(), 'hotels', hotelId, 'readings'),
+    orderBy('recordedAt', 'desc'),
+  )
 }
 
 export function createFirestoreStore(): ReadingStore {
   return {
     async save(reading) {
       const db = getDb()
-      const ref = doc(db, 'hotels', reading.hotelId, 'readings', reading.id)
+
+      const readingRef = doc(
+        db,
+        'hotels',
+        reading.hotelId,
+        'readings',
+        reading.id,
+      )
+
       return runTransaction(db, async (transaction) => {
-        const existing = await transaction.get(ref)
+        const existing = await transaction.get(readingRef)
+
         if (existing.exists()) {
           return 'duplicate' as const
         }
-        transaction.set(ref, { ...reading, receivedAt: serverTimestamp() })
+
+        transaction.set(readingRef, {
+          ...reading,
+          receivedAt: serverTimestamp(),
+        })
+
         return 'saved' as const
       })
     },
+
     async list(hotelId) {
       const snapshot = await getDocs(readingsQuery(hotelId))
-      return snapshot.docs.map((item) => toReading(item.data()))
+
+      return snapshot.docs.map((item) =>
+        toReading(item.id, item.data()),
+      )
     },
+
     subscribe(hotelId, onChange, onError) {
       return onSnapshot(
         readingsQuery(hotelId),
-        (snapshot) => onChange(snapshot.docs.map((item) => toReading(item.data()))),
-        (error) => onError(error.message),
+        (snapshot) => {
+          const readings = snapshot.docs.map((item) =>
+            toReading(item.id, item.data()),
+          )
+
+          onChange(readings)
+        },
+        (error) => {
+          onError(error.message)
+        },
       )
     },
   }
